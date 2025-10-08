@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.xing.springcourse.petproject3rest.dto.MeasurementDTO;
+import ru.xing.springcourse.petproject3rest.models.Measurement;
+import ru.xing.springcourse.petproject3rest.repositories.MeasurementRepository;
 import ru.xing.springcourse.petproject3rest.services.MeasurementService;
 
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.List;
 @Slf4j
 public class MeasurementController {
     private final MeasurementService measurementService;
+    private final MeasurementRepository measurementRepository;
 
     @PostMapping("/{sensors}")
     public String addMeasurement(@PathVariable("sensors") String sensorName
@@ -30,8 +33,15 @@ public class MeasurementController {
     }
 
     @GetMapping
-    public MeasurementDTO getMeasurementById(@PathVariable("sensors") String sensorName) {
-        log.info("Getting measurement for sensor {}", sensorName);
-        measurementService.getAllMeasurements();
+    public MeasurementDTO getMeasurementById(int id) {
+        log.info("Getting measurement for id {}", id);
+        Measurement measurement = measurementRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Measurement not found"));
+
+        return new MeasurementDTO(
+                measurement.getValue(),
+                measurement.isRaining(),
+                measurement.getMeasurementDateTime()
+        );
     }
 }
