@@ -27,6 +27,8 @@ public class SensorService {
         Sensor sensor = sensorRepository.findByName(name)
                 .orElseThrow(() -> new RuntimeException("Sensor not found"));
 
+        log.info(sensor.toString());
+
         List<MeasurementDTO> measurements = sensor.getMeasurement()
                 .stream()
                 .map(m -> new MeasurementDTO(
@@ -38,6 +40,7 @@ public class SensorService {
         return SensorDTO.builder()
                 .name(sensor.getName())
                 .measurements(measurements).build();
+
     }
 
     //Получить список всех сенсоров
