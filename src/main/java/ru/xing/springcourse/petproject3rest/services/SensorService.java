@@ -1,6 +1,7 @@
 package ru.xing.springcourse.petproject3rest.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.xing.springcourse.petproject3rest.dto.MeasurementDTO;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class SensorService {
     private final SensorRepository sensorRepository;
     private final MeasurementRepository measurementRepository;
@@ -53,22 +55,6 @@ public class SensorService {
                                         .toList())
                         .build())
                 .toList();
-    }
-
-    public void addMeasurement(String sensorName, MeasurementDTO measurementDTO) {
-        Sensor sensor = sensorRepository.findByName(sensorName)
-                .orElseThrow(() -> new RuntimeException("Sensor not found"));
-
-        Measurement measurement = Measurement.builder()
-                .value(measurementDTO.getValue())
-                .raining(measurementDTO.isRaining())
-                .measurementDateTime(measurementDTO.getMeasurementDateTime() != null
-                        ? measurementDTO.getMeasurementDateTime()
-                        : LocalDateTime.now())
-                .sensor(sensor)
-                .build();
-
-        measurementRepository.save(measurement);
     }
 
     public void registerSensor(String name) {
