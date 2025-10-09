@@ -2,6 +2,9 @@ package ru.xing.springcourse.petproject3rest.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -21,12 +24,17 @@ public class Measurement {
     private int id;
 
     @Column(name = "value")
-    private String value;
+    @NotNull
+    @Min(-100)
+    @Max(100)
+    private double value;
 
     @Column(name = "raining")
+    @NotNull
     private boolean raining;
 
     @Column(name = "measurement_date_time")
+    @NotNull
     private LocalDateTime measurementDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)

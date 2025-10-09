@@ -1,12 +1,16 @@
 package ru.xing.springcourse.petproject3rest.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.xing.springcourse.petproject3rest.dto.SensorDTO;
 import ru.xing.springcourse.petproject3rest.models.Sensor;
 import ru.xing.springcourse.petproject3rest.repositories.SensorRepository;
 import ru.xing.springcourse.petproject3rest.services.SensorService;
+import ru.xing.springcourse.petproject3rest.util.ErrorUtil;
 
 import java.util.List;
 
@@ -29,10 +33,17 @@ public class SensorController {
         return sensorService.getSensorByName(name);
     }
 
-    @PostMapping("/register")
-    public String addSensor(@RequestParam String name) {
-        log.info("Adding sensor {}", name);
-        sensorService.registerSensor(name);
-        return "Sensor registered successfully";
+    // Универсальный endpoint — принимает и JSON, и form-data
+    @PostMapping(value = "/register", consumes = {"application/json", "application/x-www-form-urlencoded"})
+    public ResponseEntity<String> registerSensor(@RequestBody @Valid SensorDTO sensorDTO,
+                                                 BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ErrorUtil.returnErrorsToClient(bindingResult);
+        }
+
+        log.info("Registering sensor: {}", sensorDTO.getName());
+        sensorService.registerSensor(sensorDTO.getName());
+
+        return ResponseEntity.ok("Sensor registered successfully");
     }
 }

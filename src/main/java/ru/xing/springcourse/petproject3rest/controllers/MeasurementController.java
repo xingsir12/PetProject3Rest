@@ -1,12 +1,16 @@
 package ru.xing.springcourse.petproject3rest.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.xing.springcourse.petproject3rest.dto.MeasurementDTO;
 import ru.xing.springcourse.petproject3rest.models.Measurement;
 import ru.xing.springcourse.petproject3rest.repositories.MeasurementRepository;
 import ru.xing.springcourse.petproject3rest.services.MeasurementService;
+import ru.xing.springcourse.petproject3rest.util.ErrorUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -17,14 +21,16 @@ import java.util.Map;
 @Slf4j
 public class MeasurementController {
     private final MeasurementService measurementService;
-    private final MeasurementRepository measurementRepository;
 
-    @PostMapping("/{sensors}")
-    public String addMeasurement(@PathVariable("sensors") String sensorName
-    , @RequestBody MeasurementDTO measurementDTO) {
+    @PostMapping("/{sensor}")
+    public ResponseEntity<String> addMeasurement(@PathVariable("sensor") String sensorName
+    , @RequestBody @Valid MeasurementDTO measurementDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ErrorUtil.returnErrorsToClient(bindingResult);
+        }
         log.info("Adding measurement for sensor {}", sensorName);
         measurementService.addMeasurement(sensorName, measurementDTO);
-        return "success";
+        return ResponseEntity.ok("Measurement has been added successfully");
     }
 
     @GetMapping
