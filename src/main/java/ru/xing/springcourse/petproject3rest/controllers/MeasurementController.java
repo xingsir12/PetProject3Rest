@@ -9,10 +9,11 @@ import ru.xing.springcourse.petproject3rest.repositories.MeasurementRepository;
 import ru.xing.springcourse.petproject3rest.services.MeasurementService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api.measurements")
+@RequestMapping("/api/measurements")
 @Slf4j
 public class MeasurementController {
     private final MeasurementService measurementService;
@@ -32,16 +33,22 @@ public class MeasurementController {
         return measurementService.getAllMeasurements();
     }
 
-    @GetMapping
-    public MeasurementDTO getMeasurementById(int id) {
-        log.info("Getting measurement for id {}", id);
-        Measurement measurement = measurementRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Measurement not found"));
+    @GetMapping("/{id}")
+    public MeasurementDTO getMeasurementById(@PathVariable("id") int id) {
+        log.info("Getting measurement by id {}", id);
+        return measurementService.getMeasurementById(id);
+    }
 
-        return new MeasurementDTO(
-                measurement.getValue(),
-                measurement.isRaining(),
-                measurement.getMeasurementDateTime()
-        );
+    @GetMapping("/raining/count")
+    public Map<String, Long> countRainingMeasurements() {
+        long count = measurementService.countRainingMeasurements();
+        log.info("Raining measurement count {}", count);
+        return Map.of("count", count);
+    }
+
+    @GetMapping("/raining")
+    public List<MeasurementDTO> getRainingMeasurements() {
+        log.info("Getting raining measurements");
+        return measurementService.getRainingMeasurements();
     }
 }

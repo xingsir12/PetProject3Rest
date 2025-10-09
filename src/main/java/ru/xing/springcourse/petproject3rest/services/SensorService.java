@@ -6,12 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.xing.springcourse.petproject3rest.dto.MeasurementDTO;
 import ru.xing.springcourse.petproject3rest.dto.SensorDTO;
-import ru.xing.springcourse.petproject3rest.models.Measurement;
 import ru.xing.springcourse.petproject3rest.models.Sensor;
 import ru.xing.springcourse.petproject3rest.repositories.MeasurementRepository;
 import ru.xing.springcourse.petproject3rest.repositories.SensorRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,10 +59,14 @@ public class SensorService {
     }
 
     public void registerSensor(String name) {
-        Sensor sensor = Sensor.builder()
-                .name(name)
-                .build();
+        if (sensorRepository.findByName(name).isPresent()) {
+            throw new RuntimeException("Sensor already exists: " + name);
+        }
 
+        Sensor sensor = new Sensor();
+        sensor.setName(name);
         sensorRepository.save(sensor);
+
+        log.info("Sensor registered: {}", name);
     }
 }

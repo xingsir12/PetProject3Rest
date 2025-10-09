@@ -65,12 +65,25 @@ public class MeasurementService {
         );
     }
 
-    private long countRainingMeasurements() {
-        long count = measurementRepository.findAll().stream()
-                .filter(Measurement::isRaining)
-                .count();
+    //Количество дождевых измерений
+    public long countRainingMeasurements() {
+        long count = measurementRepository.countByRainingTrue();
 
         log.info("Number of raining measurements: {}", count);
         return count;
+    }
+
+    //Список всех дождевых измерений
+    public List<MeasurementDTO> getRainingMeasurements() {
+        List<Measurement> measurements = measurementRepository.findByRainingTrue();
+
+        log.info("List of raining measurements: {}", measurements.size());
+
+        return measurements.stream()
+                .map(m -> new MeasurementDTO(
+                        m.getValue(),
+                        m.isRaining(),
+                        m.getMeasurementDateTime()
+                )).toList();
     }
 }
