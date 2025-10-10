@@ -3,14 +3,15 @@ package ru.xing.springcourse.petproject3rest.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.xing.springcourse.petproject3rest.dto.MeasurementDTO;
-import ru.xing.springcourse.petproject3rest.models.Measurement;
-import ru.xing.springcourse.petproject3rest.repositories.MeasurementRepository;
 import ru.xing.springcourse.petproject3rest.services.MeasurementService;
 import ru.xing.springcourse.petproject3rest.util.ErrorUtil;
+import ru.xing.springcourse.petproject3rest.util.MeasurementErrorResponse;
+import ru.xing.springcourse.petproject3rest.util.MeasurementException;
 
 import java.util.List;
 import java.util.Map;
@@ -56,5 +57,15 @@ public class MeasurementController {
     public List<MeasurementDTO> getRainingMeasurements() {
         log.info("Getting raining measurements");
         return measurementService.getRainingMeasurements();
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<MeasurementErrorResponse> handleException(MeasurementException ex) {
+        MeasurementErrorResponse response = new MeasurementErrorResponse(
+                ex.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
