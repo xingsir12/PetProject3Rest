@@ -38,7 +38,7 @@ public class SensorController {
     public ResponseEntity<String> registerSensor(@RequestBody @Valid SensorDTO sensorDTO,
                                                  BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            ErrorUtil.returnErrorsToClient(bindingResult);
+            ErrorUtil.throwErrors(bindingResult);
         }
 
         log.info("Registering sensor: {}", sensorDTO.getName());

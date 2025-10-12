@@ -9,6 +9,7 @@ import ru.xing.springcourse.petproject3rest.dto.SensorDTO;
 import ru.xing.springcourse.petproject3rest.models.Sensor;
 import ru.xing.springcourse.petproject3rest.repositories.MeasurementRepository;
 import ru.xing.springcourse.petproject3rest.repositories.SensorRepository;
+import ru.xing.springcourse.petproject3rest.util.BusinessException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,9 +59,10 @@ public class SensorService {
                 .toList();
     }
 
+    @Transactional
     public void registerSensor(String name) {
         if (sensorRepository.findByName(name).isPresent()) {
-            throw new RuntimeException("Sensor already exists: " + name);
+            throw new BusinessException("Sensor already exists: " + name);
         }
 
         Sensor sensor = new Sensor();

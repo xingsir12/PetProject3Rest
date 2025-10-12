@@ -39,6 +39,5 @@ public class Measurement {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sensor")
-    @JsonBackReference
     private Sensor sensor;
 }

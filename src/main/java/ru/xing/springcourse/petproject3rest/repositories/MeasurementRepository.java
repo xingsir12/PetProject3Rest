@@ -9,4 +9,6 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Intege
     long countByRainingTrue();
 
     List<Measurement> findByRainingTrue();
+
+    List<Measurement> findBySensorNameOrderByMeasurementDateTimeDesc(String sensorName);
 }
