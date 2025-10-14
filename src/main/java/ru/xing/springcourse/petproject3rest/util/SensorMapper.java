@@ -1,5 +1,6 @@
 package ru.xing.springcourse.petproject3rest.util;
 
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 import ru.xing.springcourse.petproject3rest.dto.SensorDTO;
 import ru.xing.springcourse.petproject3rest.models.Sensor;
@@ -15,13 +16,27 @@ public class SensorMapper {
     }
 
     public SensorDTO toDTO(Sensor sensor) {
+        //При LAZY загрузке вызовет LazyInitializationException, если sensor не в транзакции
+        //Лучше проверять Hibernate.isInitialized()
+
+//        return SensorDTO.builder()
+//                .name(sensor.getName())
+//                .measurements(sensor.getMeasurements() == null
+//                    ? Collections.emptyList()
+//                        : sensor.getMeasurements().stream()
+//                            .map(measurementMapper::toDTO)
+//                        .toList())
+//                .build();
+
+        //Оптимизируем SensorMapper
         return SensorDTO.builder()
                 .name(sensor.getName())
-                .measurements(sensor.getMeasurement() == null
-                    ? Collections.emptyList()
-                        : sensor.getMeasurement().stream()
-                            .map(measurementMapper::toDTO)
-                        .toList())
+                .measurements(sensor.getMeasurements() != null &&
+                        Hibernate.isInitialized(sensor.getMeasurements())
+                ? sensor.getMeasurements().stream()
+                        .map(measurementMapper::toDTO)
+                        .toList()
+                        : Collections.emptyList())
                 .build();
     }
 

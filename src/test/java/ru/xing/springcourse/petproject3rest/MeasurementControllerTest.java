@@ -34,18 +34,15 @@ public class MeasurementControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void getAllMeasurements_ShouldReturnList() throws Exception {
-
-        List<MeasurementDTO> mockData = List.of(
-                new MeasurementDTO(25.0, true, LocalDateTime.now()),
-                new MeasurementDTO(25.0, false, LocalDateTime.now())
-        );
-
-//        when(measurementService.getAllMeasurements()).thenReturn(mockData);
-        when(measurementService.getAllMeasurements());
-
-        mockMvc.perform(get("/api/measurements"))
+    void shouldReturnPagedMeasurements() throws Exception {
+        mockMvc.perform(get("/api/measurements")
+                .param("page", "0")
+                .param("size", "10")
+                .param("sort", "measurementDateTime,desc"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(2));
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.totalElements").exists())
+                .andExpect(jsonPath("$.size").value(10))
+                .andExpect(jsonPath("$.totalPages").value(0));
     }
 }

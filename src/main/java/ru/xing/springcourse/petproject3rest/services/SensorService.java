@@ -2,18 +2,16 @@ package ru.xing.springcourse.petproject3rest.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.xing.springcourse.petproject3rest.dto.MeasurementDTO;
 import ru.xing.springcourse.petproject3rest.dto.SensorDTO;
 import ru.xing.springcourse.petproject3rest.models.Sensor;
 import ru.xing.springcourse.petproject3rest.repositories.MeasurementRepository;
 import ru.xing.springcourse.petproject3rest.repositories.SensorRepository;
 import ru.xing.springcourse.petproject3rest.util.BusinessException;
 import ru.xing.springcourse.petproject3rest.util.SensorMapper;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,46 +24,17 @@ public class SensorService {
 
     public SensorDTO getSensorByName(String name) {
         Sensor sensor = sensorRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("Sensor not found"));
+                .orElseThrow(() -> new BusinessException("Sensor not found"));
 
         log.info(sensor.toString());
-
-        //До маппинга
-
-//        List<MeasurementDTO> measurements = sensor.getMeasurement()
-//                .stream()
-//                .map(m -> new MeasurementDTO(
-//                        m.getValue(),
-//                        m.isRaining(),
-//                        m.getMeasurementDateTime()
-//                )).toList();
-
-        //После
         return sensorMapper.toDTO(sensor);
 
     }
 
     //Получить список всех сенсоров
-    public List<SensorDTO> getAllSensors() {
-        //До маппинга
-//        List<Sensor> sensors = sensorRepository.findAll();
-//        return sensors.stream()
-//                .map(sensor -> SensorDTO.builder()
-//                        .name(sensor.getName())
-//                        .measurements(sensor.getMeasurement() == null ? null:
-//                                sensor.getMeasurement().stream()
-//                                        .map(m -> new MeasurementDTO(
-//                                                m.getValue(),
-//                                                m.isRaining(),
-//                                                m.getMeasurementDateTime()))
-//                                        .toList())
-//                        .build())
-//                .toList();
-
-        return sensorRepository.findAll()
-                .stream()
-                .map(sensorMapper::toDTO)
-                .toList();
+    public Page<SensorDTO> getAllSensors(Pageable pageable) {
+        Page<Sensor> sensors = sensorRepository.findAll(pageable);
+        return sensors.map(sensorMapper::toDTO);
     }
 
     @Transactional
