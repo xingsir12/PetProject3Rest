@@ -10,6 +10,7 @@ import ru.xing.springcourse.petproject3rest.models.Sensor;
 import ru.xing.springcourse.petproject3rest.repositories.MeasurementRepository;
 import ru.xing.springcourse.petproject3rest.repositories.SensorRepository;
 import ru.xing.springcourse.petproject3rest.util.BusinessException;
+import ru.xing.springcourse.petproject3rest.util.SensorMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SensorService {
     private final SensorRepository sensorRepository;
+    private final SensorMapper sensorMapper;
     private final MeasurementRepository measurementRepository;
 
     public SensorDTO getSensorByName(String name) {
@@ -28,34 +30,41 @@ public class SensorService {
 
         log.info(sensor.toString());
 
-        List<MeasurementDTO> measurements = sensor.getMeasurement()
-                .stream()
-                .map(m -> new MeasurementDTO(
-                        m.getValue(),
-                        m.isRaining(),
-                        m.getMeasurementDateTime()))
-                .collect(Collectors.toList());
+        //До маппинга
 
-        return SensorDTO.builder()
-                .name(sensor.getName())
-                .measurements(measurements).build();
+//        List<MeasurementDTO> measurements = sensor.getMeasurement()
+//                .stream()
+//                .map(m -> new MeasurementDTO(
+//                        m.getValue(),
+//                        m.isRaining(),
+//                        m.getMeasurementDateTime()
+//                )).toList();
+
+        //После
+        return sensorMapper.toDTO(sensor);
 
     }
 
     //Получить список всех сенсоров
     public List<SensorDTO> getAllSensors() {
-        List<Sensor> sensors = sensorRepository.findAll();
-        return sensors.stream()
-                .map(sensor -> SensorDTO.builder()
-                        .name(sensor.getName())
-                        .measurements(sensor.getMeasurement() == null ? null:
-                                sensor.getMeasurement().stream()
-                                        .map(m -> new MeasurementDTO(
-                                                m.getValue(),
-                                                m.isRaining(),
-                                                m.getMeasurementDateTime()))
-                                        .toList())
-                        .build())
+        //До маппинга
+//        List<Sensor> sensors = sensorRepository.findAll();
+//        return sensors.stream()
+//                .map(sensor -> SensorDTO.builder()
+//                        .name(sensor.getName())
+//                        .measurements(sensor.getMeasurement() == null ? null:
+//                                sensor.getMeasurement().stream()
+//                                        .map(m -> new MeasurementDTO(
+//                                                m.getValue(),
+//                                                m.isRaining(),
+//                                                m.getMeasurementDateTime()))
+//                                        .toList())
+//                        .build())
+//                .toList();
+
+        return sensorRepository.findAll()
+                .stream()
+                .map(sensorMapper::toDTO)
                 .toList();
     }
 

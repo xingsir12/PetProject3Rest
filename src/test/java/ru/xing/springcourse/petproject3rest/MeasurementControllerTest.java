@@ -35,12 +35,14 @@ public class MeasurementControllerTest {
 
     @Test
     void getAllMeasurements_ShouldReturnList() throws Exception {
+
         List<MeasurementDTO> mockData = List.of(
                 new MeasurementDTO(25.0, true, LocalDateTime.now()),
                 new MeasurementDTO(25.0, false, LocalDateTime.now())
         );
 
-        when(measurementService.getAllMeasurements()).thenReturn(mockData);
+//        when(measurementService.getAllMeasurements()).thenReturn(mockData);
+        when(measurementService.getAllMeasurements());
 
         mockMvc.perform(get("/api/measurements"))
                 .andExpect(status().isOk())

@@ -2,6 +2,8 @@ package ru.xing.springcourse.petproject3rest.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.xing.springcourse.petproject3rest.dto.MeasurementDTO;
@@ -50,20 +52,27 @@ public class MeasurementService {
     }
 
     //Получить список измерений
-    @Transactional(readOnly = true)
-    public List<MeasurementDTO> getAllMeasurements() {
+//    @Transactional(readOnly = true)
+//    public List<MeasurementDTO> getAllMeasurements() {
+////        return measurementRepository.findAll()
+////                .stream()
+////                .map(m -> new MeasurementDTO(
+////                        m.getValue(),
+////                        m.isRaining(),
+////                        m.getMeasurementDateTime()))
+////                .collect(Collectors.toList());
+//
 //        return measurementRepository.findAll()
 //                .stream()
-//                .map(m -> new MeasurementDTO(
-//                        m.getValue(),
-//                        m.isRaining(),
-//                        m.getMeasurementDateTime()))
-//                .collect(Collectors.toList());
+//                .map(measurementMapper::toDTO)
+//                .toList();
+//    }
 
-        return measurementRepository.findAll()
-                .stream()
-                .map(measurementMapper::toDTO)
-                .toList();
+    //Добавим пагинацию, чтобы проект мог обрабатывать огромное количество измерений без потери памяти
+    public Page<MeasurementDTO> getAllMeasurements(Pageable pageable) {
+        Page<Measurement> measurements = measurementRepository.findAll(pageable);
+
+        return measurements.map(measurementMapper::toDTO);
     }
 
     //Получить по id измерение

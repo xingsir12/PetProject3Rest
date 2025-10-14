@@ -3,6 +3,9 @@ package ru.xing.springcourse.petproject3rest.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -55,4 +58,13 @@ public class MeasurementController {
         log.info("Getting raining measurements");
         return measurementService.getRainingMeasurements();
     }
+
+    //Пагинация
+    @GetMapping
+    public Page<MeasurementDTO> getAllMeasurements(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return measurementService.getAllMeasurements(PageRequest.of(page, size));
+    }
+
 }
