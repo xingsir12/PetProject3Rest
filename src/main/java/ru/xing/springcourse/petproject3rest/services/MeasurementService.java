@@ -14,13 +14,10 @@ import ru.xing.springcourse.petproject3rest.repositories.SensorRepository;
 import ru.xing.springcourse.petproject3rest.util.BusinessException;
 import ru.xing.springcourse.petproject3rest.util.MeasurementMapper;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class MeasurementService {
     private final SensorRepository sensorRepository;
     private final MeasurementRepository measurementRepository;
@@ -32,16 +29,6 @@ public class MeasurementService {
         Sensor sensor = sensorRepository.findByName(sensorName)
                 .orElseThrow(() -> new BusinessException("Sensor not found: " + sensorName));
 
-        //Без маппинга
-//        Measurement measurement = Measurement.builder()
-//                .value(measurementDTO.getValue())
-//                .raining(measurementDTO.isRaining())
-//                .measurementDateTime(measurementDTO.getMeasurementDateTime() != null
-//                        ? measurementDTO.getMeasurementDateTime()
-//                        : LocalDateTime.now())
-//                .sensor(sensor)
-//                .build();
-
         //С маппингом
         Measurement measurement = measurementMapper.toEntity(measurementDTO, sensor);
 
@@ -50,23 +37,6 @@ public class MeasurementService {
         log.info("Added measurement for sensor '{}': value = {}, raining = {} ",
                 sensorName, measurementDTO.getValue(), measurementDTO.isRaining());
     }
-
-    //Получить список измерений
-//    @Transactional(readOnly = true)
-//    public List<MeasurementDTO> getAllMeasurements() {
-////        return measurementRepository.findAll()
-////                .stream()
-////                .map(m -> new MeasurementDTO(
-////                        m.getValue(),
-////                        m.isRaining(),
-////                        m.getMeasurementDateTime()))
-////                .collect(Collectors.toList());
-//
-//        return measurementRepository.findAll()
-//                .stream()
-//                .map(measurementMapper::toDTO)
-//                .toList();
-//    }
 
     //Добавим пагинацию, чтобы проект мог обрабатывать огромное количество измерений без потери памяти
     public Page<MeasurementDTO> getAllMeasurements(Pageable pageable) {
@@ -79,19 +49,12 @@ public class MeasurementService {
     @Transactional(readOnly = true)
     public MeasurementDTO getMeasurementById(int id) {
         Measurement measurement = measurementRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Measurement not found: " + id));
-
-//        return new MeasurementDTO(
-//                measurement.getValue(),
-//                measurement.isRaining(),
-//                measurement.getMeasurementDateTime()
-//        );
+                .orElseThrow(() -> new BusinessException("Measurement not found: " + id));
 
         return measurementMapper.toDTO(measurement);
     }
 
     //Количество дождевых измерений
-    @Transactional(readOnly = true)
     public long countRainingMeasurements() {
         long count = measurementRepository.countByRainingTrue();
 
@@ -100,21 +63,10 @@ public class MeasurementService {
     }
 
     //Список всех дождевых измерений
-    @Transactional(readOnly = true)
-    public List<MeasurementDTO> getRainingMeasurements() {
-        List<Measurement> measurements = measurementRepository.findByRainingTrue();
+    public Page<MeasurementDTO> getRainingMeasurements(Pageable pageable) {
+        Page<Measurement> measurements = measurementRepository.findByRainingTrue(pageable);
+        log.info("List of raining measurements: {}", measurements.getTotalElements());
 
-        log.info("List of raining measurements: {}", measurements.size());
-
-//        return measurements.stream()
-//                .map(m -> new MeasurementDTO(
-//                        m.getValue(),
-//                        m.isRaining(),
-//                        m.getMeasurementDateTime()
-//                )).toList();
-
-        return measurements.stream()
-                .map(measurementMapper::toDTO)
-                .toList();
+        return measurements.map(measurementMapper::toDTO);
     }
 }

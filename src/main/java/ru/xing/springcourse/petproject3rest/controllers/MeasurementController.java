@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +15,6 @@ import ru.xing.springcourse.petproject3rest.dto.MeasurementDTO;
 import ru.xing.springcourse.petproject3rest.services.MeasurementService;
 import ru.xing.springcourse.petproject3rest.util.ErrorUtil;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -34,10 +35,15 @@ public class MeasurementController {
         return ResponseEntity.ok("Measurement has been added successfully");
     }
 
+    //Пагинация
     @GetMapping
-    public List<MeasurementDTO> getAllMeasurements() {
-        log.info("Getting all measurements");
-        return measurementService.getAllMeasurements();
+    public Page<MeasurementDTO> getAllMeasurements(
+            @PageableDefault (size = 20, sort = "measurementDateTime", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+        log.info("Getting all measurements with pagination: page {}, size {}",
+                pageable.getPageNumber(), pageable.getPageSize());
+
+        return measurementService.getAllMeasurements(pageable);
     }
 
     @GetMapping("/{id}")
@@ -54,17 +60,9 @@ public class MeasurementController {
     }
 
     @GetMapping("/raining")
-    public List<MeasurementDTO> getRainingMeasurements() {
-        log.info("Getting raining measurements");
-        return measurementService.getRainingMeasurements();
+    public Page<MeasurementDTO> getRainingMeasurements(@PageableDefault (size = 20, sort = "measurementDateTime", direction = Sort.Direction.DESC)
+                                                       Pageable pageable) {
+        log.info("Getting raining measurements with pagination");
+        return measurementService.getRainingMeasurements(pageable);
     }
-
-    //Пагинация
-    @GetMapping
-    public Page<MeasurementDTO> getAllMeasurements(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        return measurementService.getAllMeasurements(PageRequest.of(page, size));
-    }
-
 }

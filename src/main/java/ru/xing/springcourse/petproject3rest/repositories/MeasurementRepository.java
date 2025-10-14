@@ -1,5 +1,7 @@
 package ru.xing.springcourse.petproject3rest.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.xing.springcourse.petproject3rest.models.Measurement;
 
@@ -11,4 +13,6 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Intege
     List<Measurement> findByRainingTrue();
 
     List<Measurement> findBySensorNameOrderByMeasurementDateTimeDesc(String sensorName);
+
+    Page<Measurement> findByRainingTrue(Pageable pageable);
 }

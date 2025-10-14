@@ -1,5 +1,6 @@
 package ru.xing.springcourse.petproject3rest.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "measurement")
+@ToString(exclude = "measurements")
 public class Sensor {
     @Id
     @Column(name = "id")
@@ -22,5 +23,6 @@ public class Sensor {
     private String name;
 
     @OneToMany(mappedBy = "sensor" ,cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Measurement> measurement;
+    @JsonBackReference
+    private List<Measurement> measurements;
 }
