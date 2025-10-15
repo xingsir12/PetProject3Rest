@@ -11,13 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.xing.springcourse.petproject3rest.dto.SensorDTO;
-import ru.xing.springcourse.petproject3rest.models.Sensor;
-import ru.xing.springcourse.petproject3rest.repositories.SensorRepository;
 import ru.xing.springcourse.petproject3rest.services.SensorService;
 import ru.xing.springcourse.petproject3rest.util.ErrorUtil;
-import ru.xing.springcourse.petproject3rest.util.SensorMapper;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -25,7 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SensorController {
     private final SensorService sensorService;
-    private final SensorMapper sensorMapper;
 
     @GetMapping
     public Page<SensorDTO> getAllSensors(@PageableDefault (size = 20, sort = "name", direction = Sort.Direction.ASC)

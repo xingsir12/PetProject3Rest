@@ -40,20 +40,20 @@ public class MeasurementControllerTest {
     @Test
     void shouldReturnPagedMeasurements() throws Exception {
         // Arrange
-        MeasurementDTO dto = MeasurementDTO.builder()
+        MeasurementDTO measurementDTO = MeasurementDTO.builder()
                 .value(25.5)
                 .isRaining(false)
                 .measurementDateTime(LocalDateTime.now())
                 .build();
 
-        Page<MeasurementDTO> page = new PageImpl<>(List.of(dto));
+        Page<MeasurementDTO> page = new PageImpl<> (List.of(measurementDTO));
         when(measurementService.getAllMeasurements(any(Pageable.class)))
                 .thenReturn(page);
 
-        // Act & Assert
+        // Act & assert
         mockMvc.perform(get("/api/measurements")
-                        .param("page", "0")
-                        .param("size", "10"))
+                .param("page", "0")
+                .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].value").value(25.5))
                 .andExpect(jsonPath("$.totalElements").value(1));

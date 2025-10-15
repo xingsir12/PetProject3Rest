@@ -1,6 +1,7 @@
 package ru.xing.springcourse.petproject3rest.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -39,5 +40,6 @@ public class Measurement {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sensor")
+    @JsonIgnore //Есть DTO
     private Sensor sensor;
 }

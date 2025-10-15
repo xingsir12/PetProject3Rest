@@ -11,7 +11,7 @@ public interface SensorRepository extends JpaRepository<Sensor, Integer> {
     Optional<Sensor> findByName(String name);
 
     //Решение проблемы N+1 запросов
-    @Query("SELECT s FROM Sensor s LEFT JOIN FETCH s.measurement")
+    @Query("SELECT s FROM Sensor s LEFT JOIN FETCH s.measurements")
     List<Sensor> findAllWithMeasurement();
 
 }
