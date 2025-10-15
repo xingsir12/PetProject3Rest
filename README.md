@@ -126,4 +126,4 @@ mvn test
 - [ ] Metrics с Actuator
 
 ## 👤 Автор
-[Ваше имя] - [GitHub](https://github.com/username) - [Email]
+[xingsir12] - [GitHub](https://github.com/xingsir12) - [danilnek615@gmail.com]
