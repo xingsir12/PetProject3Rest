@@ -39,7 +39,7 @@ CREATE TABLE Measurement(
   value double precision not null,
   raining boolean not null,
   measurement_date_time timestamp not null,
-  sensor varchar(100) references Sensor(name)
+  sensor int references Sensor(id)
 );
 ```
 
@@ -80,14 +80,14 @@ mvn spring-boot:run
 
 ### Регистрация датчика
 ```bash
-curl -X POST http://localhost:8080/api/sensors/register \
+curl -X POST http://localhost:8081/api/sensors/register \
   -H "Content-Type: application/json" \
   -d '{"name": "Sensor_Home"}'
 ```
 
 ### Добавление измерения
 ```bash
-curl -X POST "http://localhost:8080/api/measurements/add?sensorName=Sensor_Home" \
+curl -X POST "http://localhost:8081/api/measurements/add?sensorName=Sensor_Home" \
   -H "Content-Type: application/json" \
   -d '{
     "value": 23.5,
@@ -100,6 +100,61 @@ curl -X POST "http://localhost:8080/api/measurements/add?sensorName=Sensor_Home"
 Controller → Service → Repository → Database
      ↓          ↓
     DTO ←  Mapper  → Entity
+```
+
+## 🔐 Authentication
+
+API uses HTTP Basic Authentication with role-based access control.
+
+### Default Users
+
+| Username | Password | Role | Access |
+|----------|----------|------|---------|
+| admin | admin123 | ADMIN | All endpoints + sensor registration |
+| user | user123 | USER | Can add measurements |
+| superadmin | test123 | USER, ADMIN | Full access |
+
+### Protected Endpoints
+
+- `POST /api/sensors/register` - Requires **ADMIN** role
+- `POST /api/measurements/add` - Requires **USER** or **ADMIN** role
+- `GET /api/**` - Public access (no authentication required)
+
+### Using Authentication
+
+#### cURL Example
+```bash
+# Register sensor (ADMIN only)
+curl -X POST http://localhost:8080/api/sensors/register \
+  -u admin:admin123 \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Sensor_Home"}'
+
+# Add measurement (USER or ADMIN)
+curl -X POST "http://localhost:8081/api/measurements/add?sensorName=Sensor_Home" \
+  -u user:user123 \
+  -H "Content-Type: application/json" \
+  -d '{"value": 23.5, "isRaining": false}'
+```
+
+#### Postman
+1. Go to Authorization tab
+2. Select "Basic Auth"
+3. Enter username and password
+4. Send request
+
+#### Swagger UI
+1. Open http://localhost:8080/swagger-ui.html
+2. Click "Authorize" button (🔒 icon)
+3. Enter username and password
+4. Click "Authorize"
+5. Now you can test protected endpoints
+
+## 📚 API Documentation
+
+Interactive API documentation available at:
+- **Swagger UI**: http://localhost:8081/swagger-ui.html
+- **OpenAPI JSON**: http://localhost:8081/v3/api-docs
 ```
 
 ## 🧪 Тестирование
@@ -118,8 +173,8 @@ mvn test
 - Transaction management
 
 ## 🔮 Планы по улучшению
-- [ ] Добавить Spring Security (JWT authentication)
-- [ ] Swagger/OpenAPI документация
+- [ +- ] Добавить Spring Security (JWT authentication)
+- [ +- ] Swagger/OpenAPI документация
 - [ ] Docker контейнеризация
 - [ ] Integration tests
 - [ ] Caching с Redis
