@@ -2,21 +2,112 @@
 
 REST API для мониторинга метеорологических датчиков и сбора данных о погоде.
 
-## 🚀 Технологии
-- Java 17
-- Spring Boot 3.x
-- Spring Data JPA
-- PostgreSQL
-- Lombok
-- JUnit 5
-- Maven
+## 🛠 Технологии
 
-## 📋 Функциональность
-- Регистрация датчиков погоды
-- Добавление измерений температуры и осадков
-- Получение статистики по дождливым дням
-- Пагинация результатов
-- Валидация входных данных
+### Backend
+- **Java 17** - язык программирования
+- **Spring Boot 3.2** - фреймворк для разработки
+- **Spring Security** - аутентификация и авторизация
+- **Spring Data JPA** - работа с базой данных
+- **Hibernate** - ORM для маппинга объектов
+
+### База данных
+- **PostgreSQL 14+** - реляционная СУБД
+
+### Документация
+- **Springdoc OpenAPI 3** - автоматическая генерация API документации
+- **Swagger UI** - интерактивная документация
+
+### Инструменты
+- **Lombok** - уменьшение boilerplate кода
+- **Maven** - управление зависимостями
+- **JUnit 5 & Mockito** - тестирование
+- **SLF4J & Logback** - логирование
+
+---
+
+## ✨ Функциональность
+
+### Основные возможности
+- 🔐 **Аутентификация и авторизация** через Spring Security (HTTP Basic Auth)
+- 📊 **CRUD операции** для датчиков и измерений
+- 🔍 **Пагинация и сортировка** больших объемов данных
+- 📈 **Статистика** по дождливым дням
+- ✅ **Валидация входных данных** через Jakarta Validation
+- 🛡️ **Глобальная обработка исключений** с понятными сообщениями об ошибках
+- 📚 **Swagger UI документация** для интерактивного тестирования API
+- 🚀 **Оптимизированные запросы** к базе данных (решена проблема N+1)
+
+### Роли пользователей
+- **ADMIN** - полный доступ (регистрация датчиков + добавление измерений)
+- **USER** - добавление измерений для существующих датчиков
+- **Публичный доступ** - чтение данных о датчиках и измерениях
+
+---
+
+## 🏗 Архитектура
+
+Проект следует **многоуровневой архитектуре** с четким разделением ответственности:
+```
+┌─────────────────────────────────────────────┐
+│          Presentation Layer                 │
+│  Controllers (REST API Endpoints)           │
+│  + Swagger Annotations                      │
+└──────────────────┬──────────────────────────┘
+                   │
+┌──────────────────▼──────────────────────────┐
+│          Business Logic Layer               │
+│  Services (Business Rules)                  │
+│  + Transaction Management                   │
+│  + Validation                               │
+└──────────────────┬──────────────────────────┘
+                   │
+┌──────────────────▼──────────────────────────┐
+│          Data Access Layer                  │
+│  Repositories (Spring Data JPA)             │
+│  + Query Optimization                       │
+└──────────────────┬──────────────────────────┘
+                   │
+┌──────────────────▼──────────────────────────┐
+│          Database Layer                     │
+│  PostgreSQL (Entities & Relations)          │
+└─────────────────────────────────────────────┘
+
+          Cross-Cutting Concerns:
+      ┌───────────────────────────┐
+      │ Security (Authentication) │
+      │ Exception Handling        │
+      │ DTO Mapping              │
+      │ Logging                  │
+      └───────────────────────────┘
+```
+### Основные компоненты
+
+#### 1. **Models (Entity)**
+- `Sensor` - датчик погоды
+- `Measurement` - измерение (температура, осадки)
+- `MyUser` - пользователь системы
+
+#### 2. **DTOs (Data Transfer Objects)**
+- `SensorDTO` - данные датчика для передачи клиенту
+- `MeasurementDTO` - данные измерения для передачи клиенту
+
+#### 3. **Controllers**
+- `SensorController` - управление датчиками
+- `MeasurementController` - управление измерениями
+- `AuthController` - информация о текущем пользователе
+
+#### 4. **Services**
+- `SensorService` - бизнес-логика датчиков
+- `MeasurementService` - бизнес-логика измерений
+- `MyUserDetailsService` - загрузка пользователей для аутентификации
+
+#### 5. **Repositories**
+- `SensorRepository` - доступ к данным датчиков
+- `MeasurementRepository` - доступ к данным измерений
+- `UserRepository` - доступ к данным пользователей
+
+---
 
 ## 🔧 Установка и запуск
 
@@ -43,17 +134,22 @@ CREATE TABLE Measurement(
 );
 ```
 
+### Клонирование репозитория
+```bash
+git clone https://github.com/yourusername/petproject3rest.git
+cd petproject3rest
+```
+
 ### Конфигурация
-Создайте `application.properties`:
+Отредактируйте `src/main/resources/application.properties`:
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/weather_monitoring
-spring.datasource.username=your_username
+# Database
+spring.datasource.url=jdbc:postgresql://localhost:5432/PetProject3
+spring.datasource.username=postgres
 spring.datasource.password=your_password
-spring.jpa.properties.hibernate.dialect=orm.hibernate.dialect.PostgreSQLDialect
-spring.jpa.properties.hibernate.show_sql=true
-spring.data.web.pageable.default-page-size=20
-spring.data.web.pageable.max-page-size=100
-spring.data.web.pageable.one-indexed-parameters=false
+
+# Server
+server.port=8081
 ```
 
 ### Запуск
@@ -62,32 +158,104 @@ mvn clean install
 mvn spring-boot:run
 ```
 
-## 📡 API Endpoints
+Приложение будет доступно по адресу: `http://localhost:8081`
 
-### Sensors
-- `POST /api/sensors/register` - Регистрация датчика
-- `GET /api/sensors` - Список всех датчиков (с пагинацией)
-- `GET /api/sensors/{name}` - Получить датчик по имени
+### 5. Проверка работы
 
-### Measurements
-- `POST /api/measurements/add?sensorName={name}` - Добавить измерение
-- `GET /api/measurements` - Все измерения (с пагинацией)
-- `GET /api/measurements/{id}` - Измерение по ID
-- `GET /api/measurements/raining` - Дождливые измерения
-- `GET /api/measurements/raining/count` - Количество дождливых дней
+- **Swagger UI:** http://localhost:8081/swagger-ui/index.html
+- **API Docs:** http://localhost:8081/v3/api-docs
 
-## 📝 Примеры запросов
+---
 
-### Регистрация датчика
+## 📚 API Документация
+
+### Интерактивная документация
+
+Откройте Swagger UI для интерактивного тестирования:
+```
+http://localhost:8081/swagger-ui/index.html
+```
+
+### Основные endpoints
+
+#### Датчики (Sensors)
+
+| Метод | Endpoint | Описание | Доступ |
+|-------|----------|----------|--------|
+| GET | `/api/sensors` | Список всех датчиков (с пагинацией) | Публичный |
+| GET | `/api/sensors/{name}` | Получить датчик по имени | Публичный |
+| POST | `/api/sensors/register` | Зарегистрировать новый датчик | **ADMIN** |
+
+#### Измерения (Measurements)
+
+| Метод | Endpoint | Описание | Доступ |
+|-------|----------|----------|--------|
+| GET | `/api/measurements` | Список всех измерений (с пагинацией) | Публичный |
+| GET | `/api/measurements/{id}` | Получить измерение по ID | Публичный |
+| GET | `/api/measurements/raining` | Получить дождливые измерения | Публичный |
+| GET | `/api/measurements/raining/count` | Количество дождливых дней | Публичный |
+| POST | `/api/measurements/add` | Добавить новое измерение | **USER/ADMIN** |
+
+## 🔐 Аутентификация
+
+API использует **HTTP Basic Authentication** с ролевой моделью доступа.
+
+### Тестовые пользователи
+
+При первом запуске приложение автоматически создает пользователей:
+
+| Username | Password | Роль | Права доступа |
+|----------|----------|------|---------------|
+| `admin` | `admin123` | ADMIN | Полный доступ (регистрация датчиков + добавление измерений) |
+| `user` | `user123` | USER | Может добавлять измерения |
+| `superadmin` | `super123` | USER, ADMIN | Все права |
+
+### Использование аутентификации
+
+#### cURL
 ```bash
-curl -X POST http://localhost:8081/api/sensors/register \
+# Пример с admin
+curl -u admin:admin123 -X POST http://localhost:8081/api/sensors/register \
   -H "Content-Type: application/json" \
   -d '{"name": "Sensor_Home"}'
 ```
 
-### Добавление измерения
+#### Postman
+1. Перейдите в раздел **Authorization**
+2. Выберите тип **Basic Auth**
+3. Введите username и password
+4. Отправьте запрос
+
+#### Swagger UI
+1. Нажмите кнопку **"Authorize"** 🔒
+2. Введите username и password
+3. Нажмите **"Authorize"**
+4. Теперь можете тестировать защищенные endpoints
+
+---
+
+## 💡 Примеры использования
+
+### 1. Регистрация нового датчика (ADMIN)
 ```bash
-curl -X POST "http://localhost:8081/api/measurements/add?sensorName=Sensor_Home" \
+curl -u admin:admin123 -X POST http://localhost:8081/api/sensors/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sensor_Living_Room"
+  }'
+```
+
+**Ответ:**
+```
+Sensor registered successfully
+```
+
+---
+
+### 2. Добавление измерения (USER/ADMIN)
+```bash
+curl -u user:user123 -X POST \
+  "http://localhost:8081/api/measurements/add?sensorName=Sensor_Living_Room" \
   -H "Content-Type: application/json" \
   -d '{
     "value": 23.5,
@@ -95,66 +263,91 @@ curl -X POST "http://localhost:8081/api/measurements/add?sensorName=Sensor_Home"
   }'
 ```
 
-## 🏗️ Архитектура
+**Ответ:**
 ```
-Controller → Service → Repository → Database
-     ↓          ↓
-    DTO ←  Mapper  → Entity
+Measurement has been added successfully
 ```
 
-## 🔐 Authentication
+---
 
-API uses HTTP Basic Authentication with role-based access control.
-
-### Default Users
-
-| Username | Password | Role | Access |
-|----------|----------|------|---------|
-| admin | admin123 | ADMIN | All endpoints + sensor registration |
-| user | user123 | USER | Can add measurements |
-| superadmin | test123 | USER, ADMIN | Full access |
-
-### Protected Endpoints
-
-- `POST /api/sensors/register` - Requires **ADMIN** role
-- `POST /api/measurements/add` - Requires **USER** or **ADMIN** role
-- `GET /api/**` - Public access (no authentication required)
-
-### Using Authentication
-
-#### cURL Example
+### 3. Получение всех датчиков (публичный доступ)
 ```bash
-# Register sensor (ADMIN only)
-curl -X POST http://localhost:8080/api/sensors/register \
-  -u admin:admin123 \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Sensor_Home"}'
-
-# Add measurement (USER or ADMIN)
-curl -X POST "http://localhost:8081/api/measurements/add?sensorName=Sensor_Home" \
-  -u user:user123 \
-  -H "Content-Type: application/json" \
-  -d '{"value": 23.5, "isRaining": false}'
+curl http://localhost:8081/api/sensors?page=0&size=10
 ```
 
-#### Postman
-1. Go to Authorization tab
-2. Select "Basic Auth"
-3. Enter username and password
-4. Send request
+**Ответ:**
+```json
+{
+  "content": [
+    {
+      "name": "Sensor_Living_Room",
+      "measurements": []
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 10
+  },
+  "totalElements": 1,
+  "totalPages": 1
+}
+```
 
-#### Swagger UI
-1. Open http://localhost:8080/swagger-ui.html
-2. Click "Authorize" button (🔒 icon)
-3. Enter username and password
-4. Click "Authorize"
-5. Now you can test protected endpoints
+---
 
-## 📚 API Documentation
+### 4. Получение измерений датчика
+```bash
+curl http://localhost:8081/api/sensors/Sensor_Living_Room
+```
 
-Interactive API documentation available at:
-- **Swagger UI**: http://localhost:8081/swagger-ui.html
-- **OpenAPI JSON**: http://localhost:8081/v3/api-docs
+**Ответ:**
+```json
+{
+  "name": "Sensor_Living_Room",
+  "measurements": [
+    {
+      "value": 23.5,
+      "isRaining": false,
+      "measurementDateTime": "2024-10-17T14:30:00"
+    }
+  ]
+}
+```
+
+---
+
+### 5. Статистика по дождливым дням
+```bash
+curl http://localhost:8081/api/measurements/raining/count
+```
+
+**Ответ:**
+```json
+{
+  "count": 15
+}
+```
+
+---
+
+### 6. Получение только дождливых измерений
+```bash
+curl http://localhost:8081/api/measurements/raining?page=0&size=20
+```
+
+---
+
+### 7. Информация о текущем пользователе
+```bash
+curl -u admin:admin123 http://localhost:8081/api/auth/me
+```
+
+**Ответ:**
+```json
+{
+  "username": "admin",
+  "roles": ["ROLE_ADMIN"]
+}
 ```
 
 ## 🧪 Тестирование
@@ -162,23 +355,81 @@ Interactive API documentation available at:
 mvn test
 ```
 
-## 📚 Что я изучил в этом проекте
-- REST API design principles
-- Spring Data JPA and Hibernate lazy loading
-- DTO pattern and entity mapping
-- Global exception handling
-- Pagination and sorting
-- Bean validation
-- Unit testing with Mockito
-- Transaction management
+## 📖 Что я изучил
 
-## 🔮 Планы по улучшению
-- [ +- ] Добавить Spring Security (JWT authentication)
-- [ +- ] Swagger/OpenAPI документация
-- [ ] Docker контейнеризация
-- [ ] Integration tests
-- [ ] Caching с Redis
-- [ ] Metrics с Actuator
+### Backend разработка
+✅ **Spring Boot 3** - создание REST API приложений  
+✅ **Spring Security** - аутентификация и авторизация  
+✅ **Spring Data JPA** - работа с базами данных  
+✅ **Hibernate** - ORM маппинг и оптимизация запросов  
+
+### Архитектурные паттерны
+✅ **Layered Architecture** - разделение на слои (Controller-Service-Repository)  
+✅ **DTO Pattern** - безопасная передача данных между слоями  
+✅ **Mapper Pattern** - конвертация Entity ↔ DTO  
+✅ **Repository Pattern** - абстракция доступа к данным  
+
+### Безопасность
+✅ **HTTP Basic Authentication** - базовая аутентификация  
+✅ **BCrypt password encoding** - безопасное хранение паролей  
+✅ **Role-based access control (RBAC)** - управление доступом на основе ролей  
+✅ **CSRF protection** - защита от межсайтовой подделки запросов  
+
+### Оптимизация и производительность
+✅ **Pagination** - обработка больших объемов данных  
+✅ **Query optimization** - решение проблемы N+1 запросов  
+✅ **Lazy loading** - ленивая загрузка связанных сущностей  
+✅ **Transaction management** - управление транзакциями  
+
+### Валидация и обработка ошибок
+✅ **Jakarta Validation** - валидация входных данных  
+✅ **Global Exception Handling** - централизованная обработка исключений  
+✅ **Custom exceptions** - создание кастомных исключений  
+
+### Документация
+✅ **Swagger/OpenAPI 3** - автоматическая генерация документации  
+✅ **Swagger UI** - интерактивное тестирование API  
+
+### Тестирование
+✅ **Unit testing** - тестирование отдельных компонентов  
+✅ **Mockito** - мокирование зависимостей  
+✅ **MockMvc** - тестирование REST контроллеров  
+
+### DevOps практики
+✅ **Maven** - управление зависимостями и сборка проекта  
+✅ **Logging** - логирование с SLF4J/Logback  
+✅ **Configuration management** - вынос настроек в properties  
+
+---
+
+## 🔮 Планы развития
+
+### В разработке
+- [ ] **Docker containerization** - упаковка в Docker контейнеры
+- [ ] **docker-compose** - оркестрация контейнеров
+- [ ] **Integration tests** - интеграционное тестирование
+- [ ] **GitHub Actions CI/CD** - автоматизация сборки и тестирования
+
+### Планируется
+- [ ] **JWT authentication** - token-based аутентификация
+- [ ] **Redis caching** - кэширование часто запрашиваемых данных
+- [ ] **WebSocket support** - real-time обновления данных
+- [ ] **Actuator metrics** - мониторинг и метрики приложения
+- [ ] **Rate limiting** - ограничение частоты запросов
+- [ ] **Kubernetes deployment** - развертывание в Kubernetes
+- [ ] **Grafana dashboard** - визуализация метрик
+
+---
+
+## 📊 Статистика проекта
+
+- **Строк кода:** ~1060 (без учета комментариев и пустых строк)
+- **Классов:** 25+
+- **REST endpoints:** 10
+- **Unit tests:** 1 (в процессе расширения)
+- **Покрытие тестами:** ~10% (планируется увеличить до 70%)
+
+---
 
 ## 👤 Автор
 [xingsir12] - [GitHub](https://github.com/xingsir12) - [danilnek615@gmail.com]
