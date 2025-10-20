@@ -13,7 +13,6 @@ import java.util.List;
 @RestControllerAdvice(basePackages = "ru.xing.springcourse.petproject3rest.controller")
 @Slf4j
 public class GlobalExceptionHandler {
-
     public record ErrorResponse(
             LocalDateTime timestamp,
             int status,
