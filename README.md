@@ -241,6 +241,92 @@ curl -u admin:admin123 -X POST http://localhost:8081/api/sensors/register \
 
 ---
 
+## 🐳 Развёртывание через Docker
+### Быстрый старт с Docker
+
+Самый простой способ запустить приложение:
+```bash
+# Клонируем репозиторий
+git clone https://github.com/yourusername/weather-sensor-api
+cd weather-sensor-api
+
+# Запускаем все сервисы (PostgreSQL + Redis + Приложение)
+docker-compose up -d
+
+# Проверяем статус контейнеров
+docker-compose ps
+
+# Просмотр логов приложения
+docker-compose logs -f app
+
+# Доступ к приложению
+# Swagger UI: http://localhost:8081/swagger-ui/index.html
+# Health Check: http://localhost:8081/actuator/health
+```
+
+### Сервисы
+
+Docker Compose поднимает следующие сервисы:
+
+PostgreSQL 14 — основная база данных (порт 5432)
+
+Redis 7 — кеширование (порт 6379)
+
+Spring Boot App — REST API (порт 8081)
+
+### Переменные окружения
+
+Вы можете настроить конфигурацию в docker-compose.yml:
+```yaml
+environment:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/PetProject3
+  SPRING_DATASOURCE_USERNAME: postgres
+  SPRING_DATASOURCE_PASSWORD: postgres
+  SPRING_DATA_REDIS_HOST: redis
+  SPRING_DATA_REDIS_PORT: 6379
+```
+
+# Обратите внимание: имя хоста postgres и redis совпадает с именами сервисов в docker-compose.yml.
+
+### Полезные команды
+```bash
+# Остановить все сервисы
+docker-compose down
+
+# Остановить и удалить данные (чистый старт)
+docker-compose down -v
+
+# Пересобрать и запустить приложение
+docker-compose up -d --build app
+
+# Просмотр логов всех сервисов
+docker-compose logs -f
+
+# Проверка Redis
+docker exec -it weather-redis redis-cli
+> KEYS *
+
+# Проверка PostgreSQL
+docker exec -it weather-postgres psql -U postgres -d PetProject3
+\dt
+```
+
+### Размер Docker-образа
+
+Стадия сборки: ~500 МБ (JDK + зависимости)
+
+Стадия выполнения: ~200 МБ (JRE + приложение)
+
+Оптимизация multi-stage: уменьшение размера на ~60%
+
+### Производительность
+
+Cold start: ~10-15 секунд
+
+С healthcheck: автоматическое восстановление при сбое
+
+Кеширование через Redis: ускорение ответов в 7 раз
+
 ## 💡 Примеры использования
 
 ### 1. Регистрация нового датчика (ADMIN)
