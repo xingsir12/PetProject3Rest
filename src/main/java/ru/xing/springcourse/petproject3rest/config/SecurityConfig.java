@@ -64,6 +64,11 @@ public class SecurityConfig {
                                 "/v3/api-docs/**", // JSON/YAML
                                 "/webjars/**"      // WebJars (JS библиотеки)
                         ).permitAll()
+                        // Actuator (для healthcheck)
+                        .requestMatchers(
+                                "/actuator/health",
+                                "/actuator/info")
+                        .permitAll()
                         // Admin endpoints
                                 .requestMatchers("/api/sensors/register").hasRole("ADMIN")
                         // User endpoints
