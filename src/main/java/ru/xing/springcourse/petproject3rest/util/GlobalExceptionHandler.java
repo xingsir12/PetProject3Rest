@@ -2,6 +2,8 @@ package ru.xing.springcourse.petproject3rest.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.antlr.v4.runtime.atn.ErrorInfo;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RestControllerAdvice(basePackages = "ru.xing.springcourse.petproject3rest.controller")
+@RestControllerAdvice(basePackages = "ru.xing.springcourse.petproject3rest.controllers")
 @Slf4j
 public class GlobalExceptionHandler {
     public record ErrorResponse(
@@ -35,6 +37,35 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(body);
     }
 
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Object> handleBusinessExceptionHandler(BusinessException e) {
+        log.error("Business exception: {}", e.getMessage());
+        ErrorResponse body = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                e.getMessage(),
+                null
+        );
+
+        return ResponseEntity.badRequest().body(body);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
+        log.warn("Illegal argument: {}", e.getMessage());
+
+        ErrorResponse body = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                e.getMessage(),
+                null
+        );
+
+        return ResponseEntity.badRequest().body(body);
+    }
+
     //Обработка Runtime exception
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Object> handleRuntimeExceptionHandler(RuntimeException e) {
@@ -48,20 +79,6 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
-    }
-
-    @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<Object> handleBusinessExceptionHandler(BusinessException e) {
-        log.error("Business exception: {}", e.getMessage());
-        ErrorResponse body = new ErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                e.getMessage(),
-                null
-        );
-
-        return ResponseEntity.badRequest().body(body);
     }
 
     @ExceptionHandler(Exception.class)
