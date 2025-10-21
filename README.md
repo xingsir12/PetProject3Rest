@@ -499,7 +499,7 @@ mvn test
 
 ### В разработке
 - ✅ **Docker containerization** - упаковка в Docker контейнеры
-- [ ] **docker-compose** - оркестрация контейнеров
+- ✅ **docker-compose** - оркестрация контейнеров
 - [ ] **Integration tests** - интеграционное тестирование
 - [ ] **GitHub Actions CI/CD** - автоматизация сборки и тестирования
 
