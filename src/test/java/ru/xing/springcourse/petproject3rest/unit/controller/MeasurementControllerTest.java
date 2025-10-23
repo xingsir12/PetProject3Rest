@@ -1,11 +1,9 @@
-package ru.xing.springcourse.petproject3rest;
+package ru.xing.springcourse.petproject3rest.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +11,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.xing.springcourse.petproject3rest.controllers.MeasurementController;
 import ru.xing.springcourse.petproject3rest.dto.MeasurementDTO;
-import ru.xing.springcourse.petproject3rest.models.Measurement;
 import ru.xing.springcourse.petproject3rest.services.MeasurementService;
 
 import java.time.LocalDateTime;
