@@ -76,7 +76,8 @@ public class SecurityConfig {
 
                         // Public read endpoints
                         .requestMatchers(HttpMethod.GET, "/api/sensors/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/measurements/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/measurements/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())

@@ -1,4 +1,4 @@
-package ru.xing.springcourse.petproject3rest;
+package ru.xing.springcourse.petproject3rest.integration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -22,8 +22,10 @@ import ru.xing.springcourse.petproject3rest.dto.SensorDTO;
 import ru.xing.springcourse.petproject3rest.models.Sensor;
 import ru.xing.springcourse.petproject3rest.repositories.SensorRepository;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -105,5 +107,30 @@ public class SensorIntegrationTest {
 
         assertThat(response.getBody().get("status")).isEqualTo(400);
         assertThat(response.getBody().get("error")).isEqualTo("Bad Request");
+    }
+
+    @Test
+    @Order(3)
+    void shouldGetAllSensorsWithPagination() {
+        // Given
+        for(int i = 0; i < 25; i++){
+            Sensor sensor = new Sensor();
+            sensor.setName("Sensor_" + i);
+            sensorRepository.save(sensor);
+        }
+
+        // When
+        ResponseEntity<Map> response = restTemplate.getForEntity(
+                "/api/sensors?page=0&size=10", Map.class
+        );
+
+        //Assert
+        System.out.println("Response: " + response.getBody());
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Map<String, Object> body = response.getBody();
+        assertThat(body.get("totalElements")).isEqualTo(25);
+        assertThat(body.get("totalPages")).isEqualTo(3);
+        assertThat(((List) body.get("content")).size()).isEqualTo(10);
     }
 }
