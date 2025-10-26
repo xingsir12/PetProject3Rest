@@ -2,6 +2,7 @@ package ru.xing.springcourse.petproject3rest.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.xing.springcourse.petproject3rest.util.RoleListConverter;
 
 import javax.management.relation.RoleList;
 import java.util.ArrayList;
@@ -24,6 +25,6 @@ public class MyUser {
     private String password;
 
     @Column(name = "role", length = 255)
-    @Convert(converter = RoleList.class)
+    @Convert(converter = RoleListConverter.class)
     private List<String> role = new ArrayList<>();
 }
