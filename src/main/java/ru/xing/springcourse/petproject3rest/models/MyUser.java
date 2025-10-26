@@ -3,6 +3,10 @@ package ru.xing.springcourse.petproject3rest.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import javax.management.relation.RoleList;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,5 +23,7 @@ public class MyUser {
 
     private String password;
 
-    private String role;
+    @Column(name = "role", length = 255)
+    @Convert(converter = RoleList.class)
+    private List<String> role = new ArrayList<>();
 }

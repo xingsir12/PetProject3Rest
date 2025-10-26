@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.xing.springcourse.petproject3rest.models.MyUser;
 import ru.xing.springcourse.petproject3rest.repositories.UserRepository;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -18,47 +20,30 @@ public class DataInitializer implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    @Transactional
-    public void run(String... args) throws Exception {
-        initializeUsers();
-    }
+    public void run(String... args) {
+        if (userRepository.count() == 0) {
+            // Создаем админа
+            MyUser admin = new MyUser();
+            admin.setUsername("admin");
+            admin.setPassword(passwordEncoder.encode("admin123"));
+            admin.setRole(List.of("ROLE_ADMIN"));
+            userRepository.save(admin);
 
-    private void initializeUsers() {
-        // Удаляем всех существующих пользователей (для тестирования)
-        userRepository.deleteAll();
-        log.info("🗑️ Cleared existing users");
-
-        // Создаем admin
-        createUserIfNotExists("admin", "admin123", "ADMIN");
-
-        // Создаем user
-        createUserIfNotExists("user", "user123", "USER");
-
-        // Создаем superadmin с двумя ролями
-        createUserIfNotExists("superadmin", "super123", "USER,ADMIN");
-
-        log.info("✅ Database initialization completed!");
-        log.info("📋 Available users:");
-        log.info("   - admin:admin123 (ADMIN)");
-        log.info("   - user:user123 (USER)");
-        log.info("   - superadmin:super123 (USER,ADMIN)");
-    }
-
-    private void createUserIfNotExists(String username, String rawPassword, String role) {
-        if (userRepository.findByUsername(username).isEmpty()) {
+            // Создаем обычного пользователя
             MyUser user = new MyUser();
-            user.setUsername(username);
-
-            String encodedPassword = passwordEncoder.encode(rawPassword);
-            user.setPassword(encodedPassword);
-            user.setRole(role);
-
+            user.setUsername("user");
+            user.setPassword(passwordEncoder.encode("user123"));
+            user.setRole(List.of("ROLE_USER"));
             userRepository.save(user);
 
-            log.info("✅ Created user: {} with role: {}", username, role);
-            log.info("   Password hash: {}...", encodedPassword.substring(0, 20));
-        } else {
-            log.info("ℹ️ User already exists: {}", username);
+            // Создаем супер-админа
+            MyUser superAdmin = new MyUser();
+            superAdmin.setUsername("superadmin");
+            superAdmin.setPassword(passwordEncoder.encode("super123"));
+            superAdmin.setRole(List.of("ROLE_USER", "ROLE_ADMIN"));
+            userRepository.save(superAdmin);
+
+            System.out.println("Test users created successfully!");
         }
     }
 }

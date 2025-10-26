@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.xing.springcourse.petproject3rest.config.MyUserDetails;
+import ru.xing.springcourse.petproject3rest.dto.UserDTO;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -40,20 +42,16 @@ public class AuthController {
             )
     })
     @GetMapping("/me")
-    public ResponseEntity<Map<String, Object>> getCurrentUser(Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public UserDTO getCurrentUser(Authentication authentication) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUsername(authentication.getName());
 
-        MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
+        List<String> roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
 
-        Map<String, Object> response = Map.of(
-                "username", userDetails.getUsername(),
-                "roles", userDetails.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toList())
-        );
+        userDTO.setRole(roles);
 
-        return ResponseEntity.ok(response);
+        return userDTO;
     }
 }
