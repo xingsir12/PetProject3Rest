@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.xing.springcourse.petproject3rest.dto.MeasurementDTO;
@@ -55,6 +56,7 @@ public class MeasurementController {
             )
     })
     @PostMapping("/add")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<String> addMeasurement(
             @Parameter(description = "Name of the sensor", example = "Sensor_Home")
             @RequestParam String sensorName,
@@ -92,6 +94,7 @@ public class MeasurementController {
     })
     //Пагинация
     @GetMapping
+    @PreAuthorize("permitAll()")
     public Page<MeasurementDTO> getAllMeasurements(
             @PageableDefault (size = 20, sort = "measurementDateTime", direction = Sort.Direction.DESC)
             Pageable pageable) {

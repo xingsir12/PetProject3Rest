@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.xing.springcourse.petproject3rest.dto.SensorDTO;
@@ -82,6 +83,7 @@ public class SensorController {
     })
     // Универсальный endpoint — принимает и JSON, и form-data
     @PostMapping(value = "/register", consumes = {"application/json", "application/x-www-form-urlencoded"})
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> registerSensor(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Sensor registered data",

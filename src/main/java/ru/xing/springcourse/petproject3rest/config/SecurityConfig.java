@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,6 +22,7 @@ import ru.xing.springcourse.petproject3rest.services.MyUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Bean
@@ -69,14 +71,11 @@ public class SecurityConfig {
                                 "/actuator/health",
                                 "/actuator/info")
                         .permitAll()
-                        // Admin endpoints
-                                .requestMatchers("/api/sensors/register").hasRole("ADMIN")
-                        // User endpoints
-                                .requestMatchers("/api/measurements/add").hasRole("USER")
-
                         // Public read endpoints
                         .requestMatchers(HttpMethod.GET, "/api/sensors/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/measurements/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
 
                         .anyRequest().authenticated()
                 )
