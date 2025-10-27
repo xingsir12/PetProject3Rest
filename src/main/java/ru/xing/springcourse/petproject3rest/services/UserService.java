@@ -2,7 +2,6 @@ package ru.xing.springcourse.petproject3rest.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserDetailsServiceAutoConfiguration userDetailsServiceAutoConfiguration;
+    private final MyUserDetailsService myUserDetailsService;
 
     /**
      * Получить всех пользователей с пагинацией
