@@ -28,7 +28,7 @@ public class MeasurementDTO {
             example = "false"
     )
     @NotNull(message = "Raining field must be specified")
-    private boolean isRaining;
+    private Boolean raining;
 
     @Schema(
             description = "Measurement timestamp (auto-generated if not provided)",

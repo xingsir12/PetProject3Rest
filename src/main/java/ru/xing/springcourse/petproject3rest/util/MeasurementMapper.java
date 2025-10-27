@@ -13,7 +13,7 @@ public class MeasurementMapper {
     public MeasurementDTO toDTO(Measurement measurement) {
         return MeasurementDTO.builder()
                 .value(measurement.getValue())
-                .isRaining(measurement.isRaining())
+                .raining(measurement.isRaining())
                 .measurementDateTime(measurement.getMeasurementDateTime())
                 .build();
     }
@@ -21,7 +21,7 @@ public class MeasurementMapper {
     public Measurement toEntity(MeasurementDTO measurementDTO, Sensor sensor) {
         return Measurement.builder()
                 .value(measurementDTO.getValue())
-                .raining(measurementDTO.isRaining())
+                .raining(measurementDTO.getRaining())
                 .measurementDateTime(measurementDTO.getMeasurementDateTime() != null
                         ? measurementDTO.getMeasurementDateTime()
                         : LocalDateTime.now())

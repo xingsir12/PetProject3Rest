@@ -3,6 +3,7 @@ package ru.xing.springcourse.petproject3rest.util;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,10 +24,11 @@ public class RoleListConverter implements AttributeConverter<List<String>, Strin
     @Override
     public List<String> convertToEntityAttribute(String dbData) {
         if (dbData == null || dbData.trim().isEmpty()) {
-            return List.of();
+            return new ArrayList<>();
         }
         return Arrays.stream(dbData.split(DELIMITER))
                 .map(String::trim)
+                .filter(role -> !role.isEmpty())
                 .collect(Collectors.toList());
     }
 }

@@ -16,19 +16,6 @@ public class SensorMapper {
     }
 
     public SensorDTO toDTO(Sensor sensor) {
-        //При LAZY загрузке вызовет LazyInitializationException, если sensor не в транзакции
-        //Лучше проверять Hibernate.isInitialized()
-
-//        return SensorDTO.builder()
-//                .name(sensor.getName())
-//                .measurements(sensor.getMeasurements() == null
-//                    ? Collections.emptyList()
-//                        : sensor.getMeasurements().stream()
-//                            .map(measurementMapper::toDTO)
-//                        .toList())
-//                .build();
-
-        //Оптимизируем SensorMapper
         return SensorDTO.builder()
                 .name(sensor.getName())
                 .measurements(sensor.getMeasurements() != null &&

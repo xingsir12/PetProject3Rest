@@ -70,7 +70,7 @@ public class MeasurementIntegrationTest {
         // Given
         MeasurementDTO measurementDTO = MeasurementDTO.builder()
                 .value(23.5)
-                .isRaining(false)
+                .raining(false)
                 .build();
 
         HttpHeaders headers = new HttpHeaders();
@@ -98,7 +98,7 @@ public class MeasurementIntegrationTest {
         // Given - invalid value (> 100)
         MeasurementDTO measurementDTO = MeasurementDTO.builder()
                 .value(150.5)
-                .isRaining(false)
+                .raining(false)
                 .build();
 
         HttpHeaders headers = new HttpHeaders();
@@ -131,13 +131,8 @@ public class MeasurementIntegrationTest {
             measurementRepository.save(m);
         }
 
-        // When
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth("user", "user123");
-        HttpEntity<?> request = new HttpEntity<>(headers);
-
         ResponseEntity<Map> response = restTemplate.getForEntity(
-                "/api/measurements/raining/count", Map.class
+                "/api/measurements/rainy-days/count", Map.class
         );
 
 

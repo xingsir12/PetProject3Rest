@@ -18,6 +18,7 @@ import ru.xing.springcourse.petproject3rest.services.SensorService;
 import ru.xing.springcourse.petproject3rest.util.BusinessException;
 import ru.xing.springcourse.petproject3rest.util.SensorMapper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -48,33 +49,38 @@ public class SensorServiceTest {
         sensor = new Sensor();
         sensor.setId(1);
         sensor.setName("TestSensor");
+        sensor.setMeasurements(new ArrayList<>()); // явно инициализируем
 
-        sensorDTO = new SensorDTO();
-        sensorDTO.setName("TestSensor");
+        sensorDTO = SensorDTO.builder()
+                .name("TestSensor")
+                .measurements(new ArrayList<>())
+                .build();
     }
 
     @Test
     void getSensorByName_Success() {
-        when(sensorRepository.findByName("TestSensor")).thenReturn(Optional.of(sensor));
+        when(sensorRepository.findWithMeasurementsByName("TestSensor")).thenReturn(Optional.of(sensor));
         when(sensorMapper.toDTO(sensor)).thenReturn(sensorDTO);
 
         SensorDTO result = sensorService.getSensorByName("TestSensor");
 
         assertNotNull(result);
         assertEquals("TestSensor", result.getName());
-        verify(sensorRepository, times(1)).findByName("TestSensor");
+        // Проверяем вызов правильного метода
+        verify(sensorRepository, times(1)).findWithMeasurementsByName("TestSensor");
         verify(sensorMapper, times(1)).toDTO(sensor);
     }
 
     @Test
     void getSensorByName_ThrowsException_WhenNotFound() {
-        when(sensorRepository.findByName("NonExistent")).thenReturn(Optional.empty());
+        when(sensorRepository.findWithMeasurementsByName("NonExistent")).thenReturn(Optional.empty());
 
         BusinessException exception = assertThrows(BusinessException.class,
                 () -> sensorService.getSensorByName("NonExistent"));
 
         assertEquals("Sensor not found", exception.getMessage());
-        verify(sensorRepository, times(1)).findByName("NonExistent");
+        // Проверяем новый метод
+        verify(sensorRepository, times(1)).findWithMeasurementsByName("NonExistent");
         verify(sensorMapper, never()).toDTO(any());
     }
 

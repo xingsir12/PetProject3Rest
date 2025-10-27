@@ -39,7 +39,7 @@ public class MeasurementService {
         measurementRepository.save(measurement);
 
         log.info("Added measurement for sensor '{}': value = {}, raining = {} ",
-                sensorName, measurementDTO.getValue(), measurementDTO.isRaining());
+                sensorName, measurementDTO.getValue(), measurementDTO.getRaining());
     }
 
     //Добавим пагинацию, чтобы проект мог обрабатывать огромное количество измерений без потери памяти

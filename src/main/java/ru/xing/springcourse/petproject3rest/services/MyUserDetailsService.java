@@ -12,6 +12,7 @@ import ru.xing.springcourse.petproject3rest.config.MyUserDetails;
 import ru.xing.springcourse.petproject3rest.models.MyUser;
 import ru.xing.springcourse.petproject3rest.repositories.UserRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,15 +28,22 @@ public class MyUserDetailsService implements UserDetailsService {
         MyUser user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        List<GrantedAuthority> authorities = user.getRole().stream()
-                .map(SimpleGrantedAuthority::new)
+        List<SimpleGrantedAuthority> authorities = user.getRole().stream()
+                .map(role -> {
+                    // Очищаем роль от лишних символов
+                    String cleanedRole = role.replace("\"", "").replace("[", "").replace("]", "").trim();
+                    // Добавляем префикс ROLE_ если его нет
+                    if (!cleanedRole.startsWith("ROLE_")) {
+                        cleanedRole = "ROLE_" + cleanedRole;
+                    }
+                    return new SimpleGrantedAuthority(cleanedRole);
+                })
                 .collect(Collectors.toList());
 
-        return User.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .authorities(authorities)
-                .build();
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                authorities
+        );
     }
-
 }

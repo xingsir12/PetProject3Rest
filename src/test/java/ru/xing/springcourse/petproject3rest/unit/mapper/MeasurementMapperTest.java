@@ -96,7 +96,7 @@ public class MeasurementMapperTest {
 
         assertNotNull(dto);
         assertEquals(18.3, dto.getValue());
-        assertFalse(dto.isRaining());
+        assertFalse(dto.getRaining());
         assertEquals(LocalDateTime.of(2024, 10, 26, 15, 30), dto.getMeasurementDateTime());
     }
 
@@ -114,6 +114,6 @@ public class MeasurementMapperTest {
 
         MeasurementDTO dto = measurementMapper.toDTO(entity);
 
-        assertTrue(dto.isRaining());
+        assertTrue(dto.getRaining());
     }
 }
