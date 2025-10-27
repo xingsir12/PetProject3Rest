@@ -88,6 +88,6 @@ public class MeasurementDTOValidationTest {
         Set<ConstraintViolation<MeasurementDTO>> violations = validator.validate(dto);
 
         assertTrue(violations.isEmpty());
-        assertTrue(dto.isRaining());
+        assertTrue(dto.getRaining());
     }
 }

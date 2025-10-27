@@ -23,17 +23,21 @@ public class SensorService {
     private final MeasurementRepository measurementRepository;
 
     public SensorDTO getSensorByName(String name) {
-        Sensor sensor = sensorRepository.findByName(name)
+        // Используем метод с @EntityGraph
+        Sensor sensor = sensorRepository.findWithMeasurementsByName(name)
                 .orElseThrow(() -> new BusinessException("Sensor not found"));
 
-        log.info(sensor.toString());
+        log.info("Found sensor '{}' with {} measurements",
+                name, sensor.getMeasurements().size());
         return sensorMapper.toDTO(sensor);
-
     }
 
-    //Получить список всех сенсоров
+    // Получить список всех сенсоров с измерениями
     public Page<SensorDTO> getAllSensors(Pageable pageable) {
+        // Используем метод с @EntityGraph
         Page<Sensor> sensors = sensorRepository.findAll(pageable);
+
+        log.info("Retrieved {} sensors with measurements", sensors.getNumberOfElements());
         return sensors.map(sensorMapper::toDTO);
     }
 

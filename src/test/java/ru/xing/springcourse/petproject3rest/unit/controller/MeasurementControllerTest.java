@@ -50,7 +50,7 @@ public class MeasurementControllerTest {
         // Arrange
         MeasurementDTO measurementDTO = MeasurementDTO.builder()
                 .value(25.5)
-                .isRaining(false)
+                .raining(false)
                 .measurementDateTime(LocalDateTime.now())
                 .build();
 
@@ -77,7 +77,7 @@ public class MeasurementControllerTest {
         mockMvc.perform(post("/api/measurements/add")
                 .param("sensorName", "TestSensor")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"value\": 23.5, \"isRaining\": false}"))
+                .content("{\"value\": 23.5, \"raining\": false}"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Measurement has been added successfully"));
     }
@@ -93,7 +93,7 @@ public class MeasurementControllerTest {
         mockMvc.perform(post("/api/measurements/add")
                         .param("sensorName", "TestSensor")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"value\": 23.5, \"isRaining\": false}"))
+                        .content("{\"value\": 23.5, \"raining\": false}"))
                 .andExpect(status().isOk());
     }
 

@@ -146,7 +146,7 @@ public class MeasurementServiceTest {
 
         assertNotNull(result);
         assertEquals(25.5, result.getValue());
-        assertFalse(result.isRaining());
+        assertFalse(result.getRaining());
         verify(measurementRepository, times(1)).findById(1);
     }
 
@@ -196,7 +196,7 @@ public class MeasurementServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
-        assertTrue(result.getContent().get(0).isRaining());
+        assertTrue(result.getContent().get(0).getRaining());
         verify(measurementRepository, times(1)).findByRainingTrue(pageable);
     }
 

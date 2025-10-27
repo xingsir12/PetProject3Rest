@@ -1,6 +1,7 @@
 package ru.xing.springcourse.petproject3rest.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,9 +13,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -44,9 +45,30 @@ public class SensorController {
             ))
     })
     @GetMapping
-    public Page<SensorDTO> getAllSensors(@PageableDefault (size = 20, sort = "name", direction = Sort.Direction.ASC)
-                                             Pageable pageable) {
-        log.info("Getting all sensors with pagination");
+    public Page<SensorDTO> getAllSensors(@Parameter(description = "Page number (0-based)", example = "0")
+                                             @RequestParam(defaultValue = "0") int page,
+
+                                         @Parameter(description = "Number of items per page", example = "20")
+                                             @RequestParam(defaultValue = "20") int size,
+
+                                         @Parameter(description = "Sort by field", example = "name")
+                                             @RequestParam(defaultValue = "name") String sort,
+
+                                         @Parameter(description = "Sort direction", example = "asc",
+                                                 schema = @Schema(allowableValues = {"asc", "desc"}))
+                                             @RequestParam(defaultValue = "asc") String direction) {
+
+        // Валидация параметров
+        if (page < 0) page = 0;
+        if (size <= 0 || size > 100) size = 20;
+
+        // Создаем Pageable с валидацией
+        Sort sortObj = Sort.by(Sort.Direction.fromString(direction), sort);
+        Pageable pageable = PageRequest.of(page, size, sortObj);
+
+        log.info("Getting all sensors with pagination: page={}, size={}, sort={}, direction={}",
+                page, size, sort, direction);
+
         return sensorService.getAllSensors(pageable);
     }
 
@@ -83,7 +105,7 @@ public class SensorController {
     })
     // Универсальный endpoint — принимает и JSON, и form-data
     @PostMapping(value = "/register", consumes = {"application/json", "application/x-www-form-urlencoded"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> registerSensor(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Sensor registered data",
