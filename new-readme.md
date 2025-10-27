@@ -1,7 +1,7 @@
 # 🌦️ Weather Sensor Monitoring System
 
 [![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk)](https://openjdk.org/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen?logo=spring)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-brightgreen?logo=spring)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-blue?logo=postgresql)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://www.docker.com/)
 [![Tests](https://img.shields.io/badge/Tests-70%25-success)](https://github.com/xingsir12/PetProject3Rest)
@@ -85,7 +85,7 @@ REST API для мониторинга метеорологических дат
 ### Backend Framework
 ```
 Java 17                 - Современная версия Java с новейшими возможностями
-Spring Boot 3.2         - Основной фреймворк для REST API
+Spring Boot 3.5.6         - Основной фреймворк для REST API
 Spring Security 6.2     - Аутентификация и авторизация
 Spring Data JPA 3.2     - Работа с базой данных через ORM
 Hibernate 6.4           - JPA провайдер для маппинга объектов
@@ -1268,6 +1268,6 @@ PetProject3Rest/
 
 Made with ❤️ by [xingsir12](https://github.com/xingsir12)
 
-**2024 © Weather Sensor Monitoring System**
+**2025 © Weather Sensor Monitoring System**
 
 </div>
