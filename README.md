@@ -72,11 +72,12 @@ REST API для мониторинга метеорологических дат
   - Интеграционные тесты
   - Структурированное логирование
 
-- 🐳 **DevOps**
+- 🐳 **DevOps и хостинг**
   - Docker контейнеризация
   - Docker Compose для оркестрации
   - Multi-stage build для оптимизации образов
   - Health checks
+  - Онлайн деплой через Railway: [ссылка на приложение](https://petproject3rest-production-692d.up.railway.app)
 
 ---
 
@@ -341,6 +342,16 @@ SELECT * FROM sensor;  # Просмотр данных
 - 🏥 **Health checks:** Автоматическое восстановление
 
 ---
+
+### 🚀 Онлайн деплой
+
+Приложение развернуто на Railway и доступно по ссылке:  
+[https://petproject3rest-production-692d.up.railway.app](https://petproject3rest-production-692d.up.railway.app)
+
+Swagger UI доступен здесь:  
+[https://petproject3rest-production-692d.up.railway.app/swagger-ui.html](https://petproject3rest-production-692d.up.railway.app/swagger-ui.html)
+
+> Примечание: все эндпоинты работают онлайн, включая тестовых пользователей и Swagger документацию.
 
 ## 📚 API Документация
 
@@ -1094,6 +1105,8 @@ PetProject3Rest/
 - Container networking - сеть контейнеров
 - Volume management - управление данными
 - Health checks - проверка работоспособности
+- Деплой на Railway - приложение доступно онлайн: [https://petproject3rest-production-692d.up.railway.app](https://petproject3rest-production-692d.up.railway.app)  
+  Swagger UI: [https://petproject3rest-production-692d.up.railway.app/swagger-ui.html](https://petproject3rest-production-692d.up.railway.app/swagger-ui.html)
 
 ✅ **Build Tools**
 - Maven - управление зависимостями
@@ -1143,61 +1156,6 @@ PetProject3Rest/
 ├── ✅ Production-ready code
 └── ✅ Security best practices
 ```
-
----
-
-## 🚀 Дальнейшее развитие
-
-### В разработке / Планируется
-
-#### 🔄 В процессе
-- [ ] **CI/CD Pipeline** - автоматизация через GitHub Actions
-  - Автоматическая сборка при push
-  - Запуск тестов
-  - Deployment в staging
-  - Code quality checks
-
-#### 📋 Высокий приоритет
-- [ ] **Redis Caching** - кэширование для повышения производительности
-  - Кэширование списка датчиков
-  - Кэширование статистики
-  - Cache invalidation стратегия
-  
-- [ ] **JWT Authentication** - token-based аутентификация
-  - Замена Basic Auth на JWT
-  - Refresh token механизм
-  - Token blacklist
-
-- [ ] **Actuator Metrics** - мониторинг и метрики
-  - Health checks
-  - Prometheus metrics
-  - Custom metrics
-  - JVM monitoring
-
-#### 🎯 Средний приоритет
-- [ ] **WebSocket Support** - real-time обновления
-  - Live updates для измерений
-  - Notification system
-  - Server-sent events
-
-- [ ] **Rate Limiting** - защита от DDoS
-  - Request throttling
-  - IP-based limiting
-  - API key support
-
-- [ ] **Advanced Statistics** - расширенная аналитика
-  - Temperature trends
-  - Weather forecasting
-  - Data visualization endpoints
-  - Export to CSV/JSON
-
-#### 💡 Дополнительные идеи
-- [ ] **Email Notifications** - уведомления по email
-- [ ] **Scheduled Tasks** - автоматические задачи
-- [ ] **File Upload** - импорт данных из файлов
-- [ ] **GraphQL API** - альтернативный API
-- [ ] **Mobile App** - мобильное приложение
-- [ ] **Frontend Dashboard** - веб-интерфейс
 
 ---
 
