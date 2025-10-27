@@ -15,6 +15,11 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI customOpenAPI() {
+        
+        Server server = new Server();
+        server.setUrl("https://petproject3rest-production-692d.up.railway.app");
+        server.setDescription("Production Server");
+        
         return new OpenAPI()
                 .info(new Info()
                         .title("Weather sensor monitoring")
