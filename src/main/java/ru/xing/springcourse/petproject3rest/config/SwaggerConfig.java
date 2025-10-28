@@ -8,20 +8,28 @@ import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Arrays;
 
 @Configuration
 public class SwaggerConfig {
 
     @Bean
     public OpenAPI customOpenAPI() {
-        
-        Server server = new Server();
-        server.setUrl("https://petproject3rest-production-692d.up.railway.app");
-        server.setDescription("Production Server");
-        
+
+        Server productionServer = new Server()
+                .url("https://petproject3rest-production-692d.up.railway.app")
+                .description("Production Server (Railway)");
+
+        Server localServer = new Server()
+                .url("http://localhost:8081")
+                .description("Local Development Server");
+
         return new OpenAPI()
+                .servers(Arrays.asList(productionServer, localServer))
                 .info(new Info()
                         .title("Weather sensor monitoring")
                         .version("1.0")
@@ -44,5 +52,13 @@ public class SwaggerConfig {
                                 .description("Enter username and password for basic authentication")
                         )
                 );
+    }
+
+    @Bean
+    public GroupedOpenApi publicApi() {
+        return GroupedOpenApi.builder()
+                .group("public")
+                .pathsToMatch("/api/**")
+                .build();
     }
 }
