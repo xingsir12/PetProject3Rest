@@ -71,6 +71,32 @@ public class AdminController {
     }
 
     @Operation(
+            summary = "Add new user",
+            description = "Add a new user. Requires ADMIN role",
+            security = @SecurityRequirement(name = "basicAuth")
+    )
+    @ApiResponses( value = {
+            @ApiResponse(responseCode = "200", description = "User added successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input or user not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - ADMIN role required")
+    })
+    @PostMapping("/users/{username}")
+    public ResponseEntity<UserDTO> createUser(
+            @Parameter(description = "Create a user", example = "user456")
+            @PathVariable String username,
+
+            @Parameter(description = "Get roles", example = "USER,ADMIN")
+            @RequestParam String roles) {
+
+        log.info("Admin: Creating user {} with roles {}", username, roles);
+
+        UserDTO userDTO = userService.createUser(username, roles);
+
+        return ResponseEntity.ok(userDTO);
+    }
+
+    @Operation(
             summary = "Promote user to ADMIN",
             description = "Grant ADMIN role to user. Requires ADMIN role.",
             security = @SecurityRequirement(name = "basicAuth")
