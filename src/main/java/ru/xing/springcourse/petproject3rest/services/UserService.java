@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.xing.springcourse.petproject3rest.dto.UserDTO;
@@ -15,6 +16,7 @@ import ru.xing.springcourse.petproject3rest.util.BusinessException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +27,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final MyUserDetailsService myUserDetailsService;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Получить всех пользователей с пагинацией
@@ -113,6 +116,40 @@ public class UserService {
 
         return toDTO(user);
     }
+
+    /**
+     * Добавить пользователя
+     */
+
+    @Transactional
+    public UserDTO createUser(String username, String rolesString) {
+        log.info("Creating user {}: {}", username, rolesString);
+
+        if (userRepository.findByUsername(username).isPresent()) {
+            throw new BusinessException("Username already exists");
+        }
+
+        String rawPassword = UUID.randomUUID().toString().substring(0, 8);
+
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+
+        List<String> newRoles = Arrays.stream(rolesString.split(","))
+                .map(String::trim)
+                .map(role -> role.startsWith("ROLE_") ? role: "ROLE_" + role)
+                .distinct()
+                .toList();
+
+        MyUser user = new MyUser();
+        user.setUsername(username);
+        user.setPassword(encodedPassword);
+        user.setRole(newRoles);
+
+        MyUser savedUser = userRepository.save(user);
+        log.info("User {} created successfully with roles {}.", username, newRoles);
+
+        return toDTO(savedUser);
+    }
+
 
     /**
      * Удалить пользователя
