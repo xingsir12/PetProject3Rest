@@ -349,7 +349,7 @@ SELECT * FROM sensor;  # Просмотр данных
 [https://petproject3rest-production-692d.up.railway.app](https://petproject3rest-production-692d.up.railway.app)
 
 Swagger UI доступен здесь:  
-[https://petproject3rest-production-692d.up.railway.app/swagger-ui.html](https://petproject3rest-production-692d.up.railway.app/swagger-ui.html)
+[[https://petproject3rest-production-692d.up.railway.app/swagger-ui.html](https://petproject3rest-production-692d.up.railway.app/swagger-ui.ht](https://petproject3rest-production-692d.up.railway.app/swagger-ui/index.html)
 
 > Примечание: все эндпоинты работают онлайн, включая тестовых пользователей и Swagger документацию.
 
