@@ -1187,7 +1187,6 @@ PetProject3Rest/
 
 **Разработчик:** xingsir12
 
-- 📧 Email: [danilnek615@gmail.com](mailto:danilnek615@gmail.com)
 - 💼 GitHub: [@xingsir12](https://github.com/xingsir12)
 - 🔗 Проект: [PetProject3Rest](https://github.com/xingsir12/PetProject3Rest)
 
