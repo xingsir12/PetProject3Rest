@@ -24,7 +24,6 @@ public class MyUser {
 
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "role", length = 255)
     @Convert(converter = RoleListConverter.class)
     private List<String> role = new ArrayList<>();

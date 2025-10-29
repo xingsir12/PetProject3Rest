@@ -41,6 +41,7 @@ public class SensorService {
         return sensors.map(sensorMapper::toDTO);
     }
 
+    // Регистрация нового сенсора
     @Transactional
     public void registerSensor(String name) {
         if (sensorRepository.findByName(name).isPresent()) {
@@ -52,5 +53,16 @@ public class SensorService {
         sensorRepository.save(sensor);
 
         log.info("Sensor registered: {}", name);
+    }
+
+    // Удаление сенсора
+    @Transactional
+    public void deleteSensor(String name) {
+        Sensor sensor = sensorRepository.findByName(name)
+                .orElseThrow(() -> new BusinessException("Sensor not found"));
+
+        sensorRepository.delete(sensor);
+
+        log.info("Sensor deleted: {}", name);
     }
 }
