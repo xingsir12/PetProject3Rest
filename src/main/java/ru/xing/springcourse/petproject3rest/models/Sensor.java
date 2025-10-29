@@ -22,7 +22,7 @@ public class Sensor {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "sensor" ,cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "sensor" ,cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonIgnore //Используем DTO
     private List<Measurement> measurements;
 }

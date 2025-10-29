@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -44,10 +45,14 @@ public class AdminController {
     )
     @GetMapping("/users")
     public Page<UserDTO> getAllUsers(
-            @PageableDefault(size = 20, sort = "username", direction = Sort.Direction.ASC)
-            Pageable pageable) {
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "20") int size,
+            @RequestParam(required = false, defaultValue = "username") String sortBy,
+            @RequestParam(required = false, defaultValue = "ASC") String direction) {
 
-        log.info("Admin: Getting all users with pagination");
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+
         return userService.getAllUsers(pageable);
     }
 

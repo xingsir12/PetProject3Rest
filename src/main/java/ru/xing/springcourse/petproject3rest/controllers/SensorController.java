@@ -129,4 +129,26 @@ public class SensorController {
 
         return ResponseEntity.ok("Sensor registered successfully");
     }
+
+    @Operation(
+            summary = "Delete a sensor (Admin only)",
+            description = "Delete a weather sensor. Only ADMIN role.",
+            security = @SecurityRequirement(name = "basicAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Sensor deleted successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input of sensor already exists"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Admin role required")
+    })
+    @DeleteMapping( "/{name}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> deleteSensor(@PathVariable String name) {
+        log.info("Deleting sensor {}", name);
+
+        sensorService.deleteSensor(name);
+
+        return ResponseEntity.ok("Sensor deleted successfully");
+    }
+
+
 }
