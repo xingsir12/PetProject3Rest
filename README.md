@@ -1189,6 +1189,7 @@ PetProject3Rest/
 
 - 💼 GitHub: [@xingsir12](https://github.com/xingsir12)
 - 🔗 Проект: [PetProject3Rest](https://github.com/xingsir12/PetProject3Rest)
+- 📧 Email: danilnek615@gmail.com
 
 ---
 
