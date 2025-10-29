@@ -77,7 +77,7 @@ REST API для мониторинга метеорологических дат
   - Docker Compose для оркестрации
   - Multi-stage build для оптимизации образов
   - Health checks
-  - Онлайн деплой через Railway: [ссылка на приложение][https://petproject3rest-production-692d.up.railway.app](https://petproject3rest-production-692d.up.railway.app/swagger-ui/index.html)
+  - Онлайн деплой через Railway: [https://petproject3rest-production-692d.up.railway.app](https://petproject3rest-production-692d.up.railway.app/swagger-ui/index.html)
 
 ---
 
