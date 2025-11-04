@@ -18,8 +18,8 @@ import java.util.Map;
 @Configuration
 @EnableKafka
 @ConditionalOnProperty(
-        name = "spring.kafka.bootstrap-servers",
-        havingValue = "disabled",
+        name = "kafka.enabled",
+        havingValue = "true",
         matchIfMissing = false
 )
 public class KafkaConfiguration {
