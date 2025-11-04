@@ -58,14 +58,16 @@ public class MeasurementService {
         log.info("Added measurement for sensor '{}': value = {}, raining = {} ",
                 sensorName, measurementDTO.getValue(), measurementDTO.getRaining());
 
-        MeasurementEvent event = MeasurementEvent.builder()
-                .sensorName(sensorName)
-                .temperature(measurementDTO.getValue())
-                .isRaining(measurementDTO.getRaining())
-                .timestamp(LocalDateTime.now())
-                .build();
-
-        kafkaProducer.sendMeasurementEvent(event);
+        // Отправка в Kafka только если доступен
+        if (kafkaProducer != null) {
+            MeasurementEvent event = MeasurementEvent.builder()
+                    .sensorName(sensorName)
+                    .temperature(measurementDTO.getValue())
+                    .isRaining(measurementDTO.getRaining())
+                    .timestamp(LocalDateTime.now())
+                    .build();
+            kafkaProducer.sendMeasurementEvent(event);
+        }
 
         log.info("Measurement added for sensor '{}': value = {}", sensorName, measurementDTO.getValue());
 
