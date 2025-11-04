@@ -1,9 +1,9 @@
+version: '3.8'
+
 services:
-  # PostgreSQL Database
   postgres:
     image: postgres:14-alpine
     container_name: weather-postgres
-    restart: unless-stopped
     environment:
       POSTGRES_DB: PetProject3
       POSTGRES_USER: postgres
@@ -12,78 +12,58 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql  # Опционально
-    networks:
-      - weather-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
-  # Redis Cache
   redis:
     image: redis:7-alpine
     container_name: weather-redis
-    restart: unless-stopped
     ports:
       - "6379:6379"
-    networks:
-      - weather-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
 
-  # Spring Boot Application
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+      # Kafka слушает два интерфейса:
+      #  - внутри Docker сети (kafka:29092)
+      #  - снаружи (localhost:9092)
+      KAFKA_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: weather-app
-    restart: unless-stopped
+    build: .
+    container_name: weather-api
+    depends_on:
+      - postgres
+      - redis
+      - kafka
     ports:
       - "8081:8081"
     environment:
-      # Database Configuration
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/PetProject3
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
-
-      # Redis Configuration
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
+      # 👇 этот адрес работает внутри Docker-сети
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
 
-      # JPA Configuration
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_JPA_SHOW_SQL: false
-
-      # Logging
-      LOGGING_LEVEL_RU_XING_SPRINGCOURSE: INFO
-
-      # Server
-      SERVER_PORT: 8081
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - weather-network
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
-# Volumes для персистентности данных
 volumes:
   postgres_data:
-    driver: local
-
-# Сеть для изоляции контейнеров
-networks:
-  weather-network:
-    driver: bridge

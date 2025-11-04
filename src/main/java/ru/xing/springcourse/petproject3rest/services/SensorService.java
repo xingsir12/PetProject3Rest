@@ -1,7 +1,11 @@
 package ru.xing.springcourse.petproject3rest.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,7 +26,10 @@ public class SensorService {
     private final SensorMapper sensorMapper;
     private final MeasurementRepository measurementRepository;
 
+    //Первый раз PostgreSQL, дальше Redis
+    @Cacheable(value = "sensors", key = "#name")
     public SensorDTO getSensorByName(String name) {
+        log.info("Fetching sensor from DB: {}", name); // Лог только при первом запросе
         // Используем метод с @EntityGraph
         Sensor sensor = sensorRepository.findWithMeasurementsByName(name)
                 .orElseThrow(() -> new BusinessException("Sensor not found"));
@@ -41,7 +48,9 @@ public class SensorService {
         return sensors.map(sensorMapper::toDTO);
     }
 
-    // Регистрация нового сенсора
+    // Регистрация нового сенсора.
+    // Создали датчик → сразу кешируем
+    @CachePut(value = "sensors", key = "#result.name")
     @Transactional
     public void registerSensor(String name) {
         if (sensorRepository.findByName(name).isPresent()) {
@@ -55,7 +64,9 @@ public class SensorService {
         log.info("Sensor registered: {}", name);
     }
 
-    // Удаление сенсора
+    // Удаление сенсора.
+    // Обновили датчик → удаляем из кеша
+    @CacheEvict(value = "sensors", key = "#name")
     @Transactional
     public void deleteSensor(String name) {
         Sensor sensor = sensorRepository.findByName(name)

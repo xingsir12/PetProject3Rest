@@ -24,6 +24,7 @@ import ru.xing.springcourse.petproject3rest.repositories.SensorRepository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -62,7 +63,7 @@ public class SensorIntegrationTest {
 
     @Test
     @Order(1)
-    void shouldRegisterSensor() {
+    void shouldRegisterSensorAndFindSensor() {
         // Given entity
         SensorDTO sensor = new SensorDTO("Sensor_Test", null);
 
@@ -74,9 +75,15 @@ public class SensorIntegrationTest {
         ResponseEntity<String> response = restTemplate.postForEntity(
                 "/api/sensors/register", request, String.class);
 
+        ResponseEntity<SensorDTO> sensorResponse = restTemplate.getForEntity(
+                "/api/sensors/Sensor_Test", SensorDTO.class
+        );
+
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
+        assertThat(Objects.requireNonNull(sensorResponse.getBody()).getName()).isEqualTo("Sensor_Test");
+
 
         // Verify in database
         Optional<Sensor> saved = sensorRepository.findByName("Sensor_Test");
