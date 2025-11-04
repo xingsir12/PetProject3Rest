@@ -77,7 +77,7 @@ REST API для мониторинга метеорологических дат
   - Docker Compose для оркестрации
   - Multi-stage build для оптимизации образов
   - Health checks
-  - Онлайн деплой через Railway: [ссылка на приложение](https://petproject3rest-production-692d.up.railway.app)
+  - Онлайн деплой через Railway: [https://petproject3rest-production-692d.up.railway.app](https://petproject3rest-production-692d.up.railway.app/swagger-ui/index.html)
 
 ---
 
@@ -349,8 +349,7 @@ SELECT * FROM sensor;  # Просмотр данных
 [https://petproject3rest-production-692d.up.railway.app](https://petproject3rest-production-692d.up.railway.app)
 
 Swagger UI доступен здесь:  
-[https://petproject3rest-production-692d.up.railway.app/swagger-ui.html](https://petproject3rest-production-692d.up.railway.app/swagger-ui.html)
-
+[https://petproject3rest-production-692d.up.railway.app/swagger-ui/index.html](https://petproject3rest-production-692d.up.railway.app/swagger-ui/index.html)
 > Примечание: все эндпоинты работают онлайн, включая тестовых пользователей и Swagger документацию.
 
 ## 📚 API Документация
@@ -1106,7 +1105,7 @@ PetProject3Rest/
 - Volume management - управление данными
 - Health checks - проверка работоспособности
 - Деплой на Railway - приложение доступно онлайн: [https://petproject3rest-production-692d.up.railway.app](https://petproject3rest-production-692d.up.railway.app)  
-  Swagger UI: [https://petproject3rest-production-692d.up.railway.app/swagger-ui.html](https://petproject3rest-production-692d.up.railway.app/swagger-ui.html)
+  Swagger UI: [https://petproject3rest-production-692d.up.railway.app/swagger-ui/index.html](https://petproject3rest-production-692d.up.railway.app/swagger-ui/index.html)
 
 ✅ **Build Tools**
 - Maven - управление зависимостями
@@ -1188,9 +1187,9 @@ PetProject3Rest/
 
 **Разработчик:** xingsir12
 
-- 📧 Email: [danilnek615@gmail.com](mailto:danilnek615@gmail.com)
 - 💼 GitHub: [@xingsir12](https://github.com/xingsir12)
 - 🔗 Проект: [PetProject3Rest](https://github.com/xingsir12/PetProject3Rest)
+- 📧 Email: danilnek615@gmail.com
 
 ---
 
