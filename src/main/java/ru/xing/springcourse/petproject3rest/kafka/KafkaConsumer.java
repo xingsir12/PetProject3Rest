@@ -13,8 +13,8 @@ import ru.xing.springcourse.petproject3rest.dto.MeasurementEvent;
 @Service
 @Slf4j
 @ConditionalOnProperty(
-        name = "spring.kafka.bootstrap-servers",
-        havingValue = "disabled",
+        name = "kafka.enabled",
+        havingValue = "true",
         matchIfMissing = false
 )
 public class KafkaConsumer {
