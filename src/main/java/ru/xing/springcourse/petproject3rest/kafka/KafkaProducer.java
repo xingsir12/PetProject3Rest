@@ -11,7 +11,11 @@ import ru.xing.springcourse.petproject3rest.dto.MeasurementEvent;
 
 @Service
 @Slf4j
-@ConditionalOnProperty(value = "spring.kafka.bootstrap-servers")
+@ConditionalOnProperty(
+        name = "spring.kafka.bootstrap-servers",
+        havingValue = "disabled",
+        matchIfMissing = false
+)
 public class KafkaProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;

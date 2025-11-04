@@ -4,14 +4,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.xing.springcourse.petproject3rest.dto.MeasurementEvent;
 
-@Slf4j
 @Service
-@ConditionalOnBean(KafkaTemplate.class)
+@Slf4j
+@ConditionalOnProperty(
+        name = "spring.kafka.bootstrap-servers",
+        havingValue = "disabled",
+        matchIfMissing = false
+)
 public class KafkaConsumer {
 
     private final ObjectMapper objectMapper;
