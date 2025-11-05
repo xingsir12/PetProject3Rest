@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @ConditionalOnMissingBean(KafkaProducer.class)
-public class NoKafkaProducer {
+public class NoKafkaProducer implements MeasurementEventSender {
 
+    @Override
     public void sendMeasurementEvent(Object event) {
         log.info("Kafka disabled — skipping sendMeasurementEvent()");
     }

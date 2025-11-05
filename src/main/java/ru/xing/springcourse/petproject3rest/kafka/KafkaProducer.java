@@ -16,7 +16,7 @@ import ru.xing.springcourse.petproject3rest.dto.MeasurementEvent;
         havingValue = "true",
         matchIfMissing = false
 )
-public class KafkaProducer {
+public class KafkaProducer implements MeasurementEventSender {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
@@ -26,12 +26,12 @@ public class KafkaProducer {
         this.objectMapper = objectMapper;
     }
 
-    public void sendMeasurementEvent(MeasurementEvent event) {
-        try{
+    @Override
+    public void sendMeasurementEvent(Object event) {
+        try {
             String message = objectMapper.writeValueAsString(event);
             log.info("Sending to Kafka topic 'course': {}", message);
             kafkaTemplate.send("course", message);
-            log.info("Sent to kafka: {}", message);
         } catch (JsonProcessingException e) {
             log.error("Failed to send measurement event", e);
         }
