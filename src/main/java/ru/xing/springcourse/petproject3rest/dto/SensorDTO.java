@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -12,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Schema(description = "Sensor registration/response data")
-public class SensorDTO {
+public class SensorDTO implements Serializable {
 
     @Schema(
             description = "Sensor name",

@@ -106,7 +106,7 @@ public class SensorController {
     // Универсальный endpoint — принимает и JSON, и form-data
     @PostMapping(value = "/register", consumes = {"application/json", "application/x-www-form-urlencoded"})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> registerSensor(
+    public ResponseEntity<SensorDTO> registerSensor(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Sensor registered data",
                     required = true,
@@ -125,9 +125,9 @@ public class SensorController {
         }
 
         log.info("Registering sensor: {}", sensorDTO.getName());
-        sensorService.registerSensor(sensorDTO.getName());
+        SensorDTO created = sensorService.registerSensor(sensorDTO.getName());
 
-        return ResponseEntity.ok("Sensor registered successfully");
+        return ResponseEntity.ok(created);
     }
 
     @Operation(

@@ -5,10 +5,11 @@ import org.springframework.stereotype.Component;
 import ru.xing.springcourse.petproject3rest.dto.SensorDTO;
 import ru.xing.springcourse.petproject3rest.models.Sensor;
 
+import java.io.Serializable;
 import java.util.Collections;
 
 @Component
-public class SensorMapper {
+public class SensorMapper implements Serializable{
     private final MeasurementMapper measurementMapper;
 
     public SensorMapper(MeasurementMapper measurementMapper) {

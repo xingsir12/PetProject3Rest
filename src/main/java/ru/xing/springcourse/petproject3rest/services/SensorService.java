@@ -1,7 +1,6 @@
 package ru.xing.springcourse.petproject3rest.services;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.xing.springcourse.petproject3rest.dto.SensorDTO;
 import ru.xing.springcourse.petproject3rest.models.Sensor;
-import ru.xing.springcourse.petproject3rest.repositories.MeasurementRepository;
 import ru.xing.springcourse.petproject3rest.repositories.SensorRepository;
 import ru.xing.springcourse.petproject3rest.util.BusinessException;
 import ru.xing.springcourse.petproject3rest.util.SensorMapper;
@@ -24,9 +22,8 @@ import ru.xing.springcourse.petproject3rest.util.SensorMapper;
 public class SensorService {
     private final SensorRepository sensorRepository;
     private final SensorMapper sensorMapper;
-    private final MeasurementRepository measurementRepository;
 
-    //Первый раз PostgreSQL, дальше Redis
+    //Первый раз PostgreSQL, дальше Redis (берем из кэша)
     @Cacheable(value = "sensors", key = "#name")
     public SensorDTO getSensorByName(String name) {
         log.info("Fetching sensor from DB: {}", name); // Лог только при первом запросе
@@ -39,12 +36,16 @@ public class SensorService {
         return sensorMapper.toDTO(sensor);
     }
 
-    // Получить список всех сенсоров с измерениями
+    // Получить список всех сенсоров
     public Page<SensorDTO> getAllSensors(Pageable pageable) {
         // Используем метод с @EntityGraph
         Page<Sensor> sensors = sensorRepository.findAll(pageable);
 
-        log.info("Retrieved {} sensors with measurements", sensors.getNumberOfElements());
+        log.info("Retrieved {} sensors with measurements (page {}/{})",
+                sensors.getNumberOfElements(),
+                sensors.getNumber(),
+                sensors.getTotalPages());
+
         return sensors.map(sensorMapper::toDTO);
     }
 
@@ -52,7 +53,7 @@ public class SensorService {
     // Создали датчик → сразу кешируем
     @CachePut(value = "sensors", key = "#result.name")
     @Transactional
-    public void registerSensor(String name) {
+    public SensorDTO registerSensor(String name) {
         if (sensorRepository.findByName(name).isPresent()) {
             throw new BusinessException("Sensor already exists: " + name);
         }
@@ -62,6 +63,8 @@ public class SensorService {
         sensorRepository.save(sensor);
 
         log.info("Sensor registered: {}", name);
+
+        return sensorMapper.toDTO(sensor);
     }
 
     // Удаление сенсора.
