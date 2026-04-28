@@ -1,0 +1,30 @@
+stages:
+  - test
+  - build
+  - dockerized
+
+test:
+  stage: test
+  image: maven:3.8.6-openjdk-17
+  script:
+    - mvn test
+
+build:
+  stage: build
+  image: maven:3.8.6-openjdk-17
+  script:
+    - mvn package -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar
+
+dockerized:
+  stage: dockerized
+  image: docker:latest
+  services:
+    - docker:dind  # Docker-in-Docker для сборки образов [citation:5]
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
